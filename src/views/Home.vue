@@ -58,17 +58,21 @@
       <h1>Portfolio:</h1>
       <table>
         <tr>
-          <th>Account Value</th>
+          <th>Market Value</th>
           <th>Day Change</th>
+          <th>Cost Basis</th>
+          <th>Gain/Loss</th>
           <!-- <th>Previous Day Value</th> -->
         </tr>
         <tr>
-          <td>${{ portfolio_value }}</td>
-          <td>${{ portfolio_day_change }} | {{ portfolio_day_change_percent }}%</td>
+          <td>${{ portfolio_market_value }}</td>
+          <td>${{ portfolio_day_change }} ({{ portfolio_day_change_percent }}%)</td>
+          <td>${{ portfolio_cost_basis }}</td>
+          <td>${{ portfolio_gain_loss }} ({{ portfolio_gain_loss_percent }}%)</td>
           <!-- <td>{{ previous_day_market_value }}</td> -->
         </tr>
       </table>
-
+      <br />
       <div>
         <button v-on:click="transactionNewRouter()">Add Transaction</button>
       </div>
@@ -76,9 +80,8 @@
       <div v-for="(transaction, index) in portfolio" v-bind:key="transaction.id">
         <h3>{{ transaction.symbol }}: ${{ transaction.current_info["latestPrice"] }}</h3>
         <p>Percent of Portfolio: {{ portfolio_percent[index] }}%</p>
-
         <p>Current Price: ${{ transaction.current_info["latestPrice"] }}</p>
-        <p>Day Change: ${{ transaction.current_info["change"] }}</p>
+        <p>Day $ Change: {{ transaction.current_info["change"] }}</p>
         <p>Day % Change: {{ day_change_percent[index] }}</p>
         <p>Market Value: ${{ market_value[index] }}</p>
         <p>Cost Basis: ${{ transaction.cost_basis }}</p>
@@ -209,7 +212,7 @@ export default {
       );
       return arr.reduce((a, b) => a + b, 0).toFixed(2);
     },
-    portfolio_value: function () {
+    portfolio_market_value: function () {
       var strings = this.market_value;
       var value = strings
         .map(Number)
@@ -221,12 +224,12 @@ export default {
       var array = this.market_value.map(Number);
       var percent_array = [];
       for (var i = 0, length = array.length; i < length; i++) {
-        var computed = array[i] / this.portfolio_value;
-        percent_array.push(computed.toFixed(3));
+        var computed = (array[i] / this.portfolio_market_value) * 100;
+        percent_array.push(computed.toFixed(2));
       }
       return percent_array;
     },
-    // previous_day_portfolio_value: function () {
+    // previous_day_portfolio_market_value: function () {
     //   return this.portfolio.map(function (transaction) {
     //     var arr = transaction.purchase_qty * transaction.current_info["previousClose"];
     //     return arr;
@@ -251,7 +254,26 @@ export default {
       return arr.reduce((a, b) => a + b, 0).toFixed(2);
     },
     portfolio_day_change_percent: function () {
-      var num = (this.portfolio_value - this.previous_day_market_value) / this.previous_day_market_value;
+      var num = (this.portfolio_market_value - this.previous_day_market_value) / this.previous_day_market_value;
+      num = num * 100;
+      return num.toFixed(3);
+    },
+    portfolio_cost_basis: function () {
+      var arr = Array.from(
+        this.portfolio.map(function (transaction) {
+          return transaction.cost_basis;
+        })
+      );
+      return arr
+        .map(Number)
+        .reduce((a, b) => a + b, 0)
+        .toFixed(2);
+    },
+    portfolio_gain_loss: function () {
+      return this.portfolio_market_value - this.portfolio_cost_basis;
+    },
+    portfolio_gain_loss_percent: function () {
+      var num = (this.portfolio_market_value - this.portfolio_cost_basis) / this.portfolio_cost_basis;
       return num.toFixed(3);
     },
   },
