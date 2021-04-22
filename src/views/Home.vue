@@ -55,7 +55,7 @@
     </div>
     <!-- THIS IS THE PORTFOLIO WINDOW -->
     <div v-if="isLoggedIn()">
-      <h1>Portfolio:</h1>
+      <h1>{{ portfolio[0].username }}'s Portfolio:</h1>
       <table>
         <tr>
           <th>Market Value</th>
@@ -78,8 +78,8 @@
       </div>
       <hr />
       <div v-for="(transaction, index) in portfolio" v-bind:key="transaction.id">
-        <h3>{{ transaction.symbol }}: ${{ transaction.current_info["latestPrice"] }}</h3>
-        <p>Percent of Portfolio: {{ portfolio_percent[index] }}%</p>
+        <h3>{{ transaction.symbol }} - {{ transaction.current_info["companyName"] }}</h3>
+        <p>Quantity: {{ transaction.purchase_qty }}</p>
         <p>Current Price: ${{ transaction.current_info["latestPrice"] }}</p>
         <p>Day $ Change: {{ transaction.current_info["change"] }}</p>
         <p>Day % Change: {{ day_change_percent[index] }}</p>
@@ -90,8 +90,9 @@
         </p> -->
         <p>Gain/Loss: ${{ gain_loss[index] }}</p>
         <p>Gain/Loss %: {{ gain_loss_percent[index] }}</p>
-        <p>{{ transaction.purchase_qty }} shares @ ${{ transaction.purchase_price }}</p>
-        <br />
+        <p>Purchase Price: {{ transaction.purchase_price }}</p>
+        <p>Percent of Portfolio: {{ portfolio_percent[index] }}%</p>
+
         <button type="button" v-on:click="showTransactionInfo(transaction)">Transaction Info/Update</button>
 
         <hr />
@@ -125,10 +126,11 @@
 
     <dialog id="update-transaction-info">
       <form method="dialog">
-        <h1>Transaction Info</h1>
+        <h1>Transaction Info:</h1>
         <span>
-          <label for="ticker-input">Symbol/Ticker:</label>
-          <input id="ticker-input" type="text" v-model="update_symbol" />
+          <h3>{{ current_transaction.symbol }}</h3>
+          <!-- <label for="ticker-input">Symbol/Ticker:</label>
+          <input id="ticker-input" type="text" v-model="update_symbol" /> -->
         </span>
         <span>
           <label for="purchase-price-input">Purchase Price:</label>
@@ -188,7 +190,8 @@ export default {
     },
     gain_loss_percent: function () {
       return this.portfolio.map(function (transaction) {
-        var num = (transaction.current_info["latestPrice"] - transaction.purchase_price) / transaction.purchase_price;
+        var num =
+          ((transaction.current_info["latestPrice"] - transaction.purchase_price) / transaction.purchase_price) * 100;
         return num.toFixed(2);
       });
     },
@@ -270,10 +273,11 @@ export default {
         .toFixed(2);
     },
     portfolio_gain_loss: function () {
-      return this.portfolio_market_value - this.portfolio_cost_basis;
+      var num = this.portfolio_market_value - this.portfolio_cost_basis;
+      return num.toFixed(2);
     },
     portfolio_gain_loss_percent: function () {
-      var num = (this.portfolio_market_value - this.portfolio_cost_basis) / this.portfolio_cost_basis;
+      var num = ((this.portfolio_market_value - this.portfolio_cost_basis) / this.portfolio_cost_basis) * 100;
       return num.toFixed(3);
     },
   },

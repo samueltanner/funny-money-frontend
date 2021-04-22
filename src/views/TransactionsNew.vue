@@ -11,15 +11,22 @@
     </div>
 
     <dialog id="add-transaction-info-modal">
-      <form method="dialog">
+      <form method="dialog" @submit="checkForm">
+     
         <h1>Transaction Info</h1>
         <h3>{{ current_item["1. symbol"] }} | {{ current_item["2. name"] }}</h3>
         <div>
-          <ul>
+          <p v-if="errors.length">
+            <b>Please correct the following error(s):</b>
+            <ul>
+            <li v-for="error in errors" :key="error.id">{{error}}</li>
+            </ul>
+          </p>
+          <!-- <ul>
             <li class="text-danger" v-for="error in errors" v-bind:key="error">
               {{ error }}
             </li>
-          </ul>
+          </ul> -->
           <span>
             <label for="purchase-price-input">Purchase Price:</label>
             <input id="purchase-price-input" type="text" v-model="purchase_price" />
@@ -30,7 +37,8 @@
           </span>
 
           <br />
-          <button type="button" v-on:click="addTransaction()">Add Transaction</button>
+          <input type="submit" value="Add Transaction" />
+          <!-- <button type="button" v-on:click="addTransaction()">Add Transaction</button> -->
           <button>Close</button>
         </div>
       </form>
@@ -41,7 +49,6 @@
 <script>
 import axios from "axios";
 import "vue-search-select/dist/VueSearchSelect.css";
-
 export default {
   data() {
     return {
@@ -49,8 +56,8 @@ export default {
       searchItem: "",
       itemList: {},
       apiLoaded: false,
-      purchase_price: "",
-      purchase_qty: "",
+      purchase_price: null,
+      purchase_qty: null,
       errors: [],
     };
   },
@@ -87,20 +94,37 @@ export default {
         symbol: this.current_item["1. symbol"],
         purchase_price: this.purchase_price,
         purchase_qty: this.purchase_qty,
+        status_open: true,
       };
       axios
         .post("api/transactions", params)
         .then((response) => {
-          this.portfolio.push(response.data);
+          // this.portfolio.push(response.data);
           console.log(response.data);
           this.$router.push("/");
         })
         // .then(() => this.$router.push("/"))
-        .catch((error) => {
-          this.errors = error.response.data.errors;
-          console.log(error.response);
-        });
+        // .catch((error) => {
+        //   this.errors = error.response.data.errors;
+        //   console.log(error.response);
+        // });
     },
+    checkForm: function (e) {
+      if (this.purchase_price && this.purchase_qty) {
+        this.addTransaction();
+      }
+      this.errors = [];
+
+      if (!this.purchase_price) {
+        this.errors.push("Purchase price required")
+      }
+     
+     if (!this.purchase_qty) {
+        this.errors.push("Purchase quantity required")
+      }
+
+      e.preventDefault();
+    }
   },
 };
 </script>
