@@ -4,6 +4,9 @@ import Home from "../views/Home.vue";
 import Signup from "../views/Signup.vue";
 import Login from "../views/Login.vue";
 import Logout from "../views/Logout.vue";
+import HomePage from "../views/HomePage.vue";
+import Test from "../views/Test.vue";
+import TransactionsNew from "../views/TransactionsNew.vue";
 
 
 Vue.use(VueRouter);
@@ -36,6 +39,21 @@ const routes = [
     path: "/logout",
     name: "logout",
     component: Logout,
+  },
+  {
+    path: "/homepage",
+    name: "homepage",
+    component: HomePage,
+  },
+  {
+    path: "/test",
+    name: "test",
+    component: Test,
+  },
+  {
+    path: "/transactions/new",
+    name: "transactions-new",
+    component: TransactionsNew,
   },
 ];
 

@@ -1,14 +1,98 @@
 <template>
   <div class="home">
-    <h1>Portfolio:</h1>
-    <div>
-      <button v-on:click="openTransactionWindow()">Add Transaction</button>
+    <div v-if="!isLoggedIn()">
+      <h1>Welcome To Funny Money</h1>
+      <button v-on:click="loginUserRouter()">Login</button>
+      <button v-on:click="signupUserRouter()">Signup</button>
+      <!-- Login Window -->
+      <!-- <dialog id="login-dialog-window">
+        <form v-on:submit.prevent="submitLogin()">
+          <h1>Login</h1>
+          <ul>
+            <li class="text-danger" v-for="error in errors" v-bind:key="error">
+              {{ error }}
+            </li>
+          </ul>
+          <div class="form-group">
+            <label>Email:</label>
+            <input type="email" class="form-control" v-model="email" />
+          </div>
+          <div class="form-group">
+            <label>Password:</label>
+            <input type="password" class="form-control" v-model="password" />
+          </div>
+          <input type="submit" class="btn btn-primary" value="Submit" />
+        </form>
+      </dialog> -->
+      <!-- Signup Window -->
+      <!-- <dialog id="signup-dialog-window">
+        <form v-on:submit.prevent="submitSignup()">
+          <h1>Signup</h1>
+          <ul>
+            <li class="text-danger" v-for="error in errors" v-bind:key="error">
+              {{ error }}
+            </li>
+          </ul>
+          <div class="form-group">
+            <label>Name:</label>
+            <input type="text" class="form-control" v-model="name" />
+          </div>
+          <div class="form-group">
+            <label>Email:</label>
+            <input type="email" class="form-control" v-model="email" />
+          </div>
+          <div class="form-group">
+            <label>Password:</label>
+            <input type="password" class="form-control" v-model="password" />
+          </div>
+          <div class="form-group">
+            <label>Password confirmation:</label>
+            <input type="password" class="form-control" v-model="passwordConfirmation" />
+          </div>
+          <input type="submit" class="btn btn-primary" value="Submit" />
+        </form>
+      </dialog> -->
     </div>
-    <div v-for="transaction in portfolio" v-bind:key="transaction.id">
-      <h3>{{ transaction.symbol }}:</h3>
-      <p>{{ transaction.purchase_qty }} shares @ ${{ transaction.purchase_price }}</p>
-      <button type="button" v-on:click="showTransactionInfo(transaction)">Transaction Info/Update</button>
+    <!-- THIS IS THE PORTFOLIO WINDOW -->
+    <div v-if="isLoggedIn()">
+      <h1>Portfolio:</h1>
+      <table>
+        <tr>
+          <th>Account Value</th>
+          <th>Day Change</th>
+          <!-- <th>Previous Day Value</th> -->
+        </tr>
+        <tr>
+          <td>${{ portfolio_value }}</td>
+          <td>${{ portfolio_day_change }} | {{ portfolio_day_change_percent }}%</td>
+          <!-- <td>{{ previous_day_market_value }}</td> -->
+        </tr>
+      </table>
+
+      <div>
+        <button v-on:click="transactionNewRouter()">Add Transaction</button>
+      </div>
       <hr />
+      <div v-for="(transaction, index) in portfolio" v-bind:key="transaction.id">
+        <h3>{{ transaction.symbol }}: ${{ transaction.current_info["latestPrice"] }}</h3>
+        <p>Percent of Portfolio: {{ portfolio_percent[index] }}%</p>
+
+        <p>Current Price: ${{ transaction.current_info["latestPrice"] }}</p>
+        <p>Day Change: ${{ transaction.current_info["change"] }}</p>
+        <p>Day % Change: {{ day_change_percent[index] }}</p>
+        <p>Market Value: ${{ market_value[index] }}</p>
+        <p>Cost Basis: ${{ transaction.cost_basis }}</p>
+        <!-- <p>
+          Gain/Loss: ${{ transaction.purchase_qty * transaction.current_info["latestPrice"] - transaction.cost_basis }}
+        </p> -->
+        <p>Gain/Loss: ${{ gain_loss[index] }}</p>
+        <p>Gain/Loss %: {{ gain_loss_percent[index] }}</p>
+        <p>{{ transaction.purchase_qty }} shares @ ${{ transaction.purchase_price }}</p>
+        <br />
+        <button type="button" v-on:click="showTransactionInfo(transaction)">Transaction Info/Update</button>
+
+        <hr />
+      </div>
     </div>
     <!-- THIS IS THE CREATE TRANSACTION DIALOG WINDOW -->
 
@@ -41,22 +125,20 @@
         <h1>Transaction Info</h1>
         <span>
           <label for="ticker-input">Symbol/Ticker:</label>
-          <input id="ticker-input" type="text" v-model="current_transaction.symbol" />
+          <input id="ticker-input" type="text" v-model="update_symbol" />
         </span>
         <span>
           <label for="purchase-price-input">Purchase Price:</label>
-          <input id="purchase-price-input" type="text" v-model="current_transaction.purchase_price" />
+          <input id="purchase-price-input" type="text" v-model="update_purchase_price" />
         </span>
         <span>
           <label for="purchase-quantity-inptut">Purchase Quantity:</label>
-          <input id="purchase-quantity-inptut" type="text" v-model="current_transaction.purchase_qty" />
+          <input id="purchase-quantity-inptut" type="text" v-model="update_purchase_qty" />
         </span>
         <br />
-        <button type="submit" data-dismiss="modal" v-on:click="updateTransaction(current_transaction)">
-          Update Transaction
-        </button>
+        <button type="submit" v-on:click="updateTransaction(current_transaction)">Update Transaction</button>
         <!-- <button type="reset">Reset</button> -->
-        <button type="button" v-on:click="destroyTransaction(current_transaction)">Delete Transaction</button>
+        <button type="submit" v-on:click="destroyTransaction(current_transaction)">Delete Transaction</button>
         <button>Close</button>
         <span>
           <!-- <label for="ticker-input">Symbol/Ticker:</label>
@@ -74,18 +156,104 @@ import axios from "axios";
 export default {
   data: function () {
     return {
+      current_transaction: {},
       portfolio: [],
       symbol: "",
       purchase_price: "",
       purchase_qty: "",
-      // update_symbol: "",
-      // update_purchase_price: "",
-      // update_purchase_qty: "",
-      current_transaction: {},
+      // current_price: "",
+      update_symbol: "",
+      update_purchase_price: "",
+      update_purchase_qty: "",
+      name: "",
+      email: "",
+      password: "",
+      passwordConfirmation: "",
+      errors: [],
+      // market_value: "",
     };
   },
   created: function () {
     this.indexPortfolio();
+  },
+  computed: {
+    gain_loss: function () {
+      return this.portfolio.map(function (transaction) {
+        var num = transaction.purchase_qty * transaction.current_info["latestPrice"] - transaction.cost_basis;
+        return num.toFixed(2);
+      });
+    },
+    gain_loss_percent: function () {
+      return this.portfolio.map(function (transaction) {
+        var num = (transaction.current_info["latestPrice"] - transaction.purchase_price) / transaction.purchase_price;
+        return num.toFixed(2);
+      });
+    },
+    market_value: function () {
+      return this.portfolio.map(function (transaction) {
+        var num = transaction.purchase_qty * transaction.current_info["latestPrice"];
+        return num.toFixed(2);
+      });
+    },
+    day_change_percent: function () {
+      return this.portfolio.map(function (transaction) {
+        var num = transaction.current_info["changePercent"];
+        return num;
+      });
+    },
+    portfolio_day_change: function () {
+      var arr = Array.from(
+        this.portfolio.map(function (transaction) {
+          return transaction.current_info["change"];
+        })
+      );
+      return arr.reduce((a, b) => a + b, 0).toFixed(2);
+    },
+    portfolio_value: function () {
+      var strings = this.market_value;
+      var value = strings
+        .map(Number)
+        .reduce((a, b) => a + b, 0)
+        .toFixed(2);
+      return value;
+    },
+    portfolio_percent: function () {
+      var array = this.market_value.map(Number);
+      var percent_array = [];
+      for (var i = 0, length = array.length; i < length; i++) {
+        var computed = array[i] / this.portfolio_value;
+        percent_array.push(computed.toFixed(3));
+      }
+      return percent_array;
+    },
+    // previous_day_portfolio_value: function () {
+    //   return this.portfolio.map(function (transaction) {
+    //     var arr = transaction.purchase_qty * transaction.current_info["previousClose"];
+    //     return arr;
+
+    //     // var value = arr.map(Number).reduce((a, b) => a + b, 0);
+    //     // return value;
+    //   });
+    // },
+    // previous_day_market_value: function () {
+    //   return this.portfolio.map(function (transaction) {
+    //     var strings = transaction.purchase_qty * transaction.current_info["previousClose"];
+    //     // .reduce((a, b) => a + b, 0);
+    //     return strings;
+    //   });
+    // },
+    previous_day_market_value: function () {
+      var arr = Array.from(
+        this.portfolio.map(function (transaction) {
+          return transaction.current_info["previousClose"] * transaction.purchase_qty;
+        })
+      );
+      return arr.reduce((a, b) => a + b, 0).toFixed(2);
+    },
+    portfolio_day_change_percent: function () {
+      var num = (this.portfolio_value - this.previous_day_market_value) / this.previous_day_market_value;
+      return num.toFixed(3);
+    },
   },
   methods: {
     indexPortfolio: function () {
@@ -104,26 +272,31 @@ export default {
         purchase_qty: this.purchase_qty,
       };
       axios.post("api/transactions", params).then((response) => {
-        this.$router.push("/");
+        this.portfolio.push(response.data);
         console.log(response.data);
       });
     },
     showTransactionInfo: function (transaction) {
       console.log(transaction);
       this.current_transaction = transaction;
+      this.update_symbol = this.current_transaction.symbol;
+      this.update_purchase_price = this.current_transaction.purchase_price;
+      this.update_purchase_qty = this.current_transaction.purchase_qty;
       document.querySelector("#update-transaction-info").showModal();
     },
     updateTransaction: function (transaction) {
       console.log("Updating Transaction");
       var params = {
-        symbol: transaction.symbol,
-        purchase_price: transaction.purchase_price,
-        purchase_qty: transaction.purchase_qty,
+        symbol: this.update_symbol,
+        purchase_price: this.update_purchase_price,
+        purchase_qty: this.update_purchase_qty,
       };
       axios
         .patch("/api/transactions/" + transaction.id, params)
         .then((response) => {
-          console.log("Transaction Updated", response.data);
+          this.portfolio.splice(this.portfolio.indexOf(transaction), 1);
+          this.portfolio.unshift(response.data);
+          console.log(response.data);
         })
         .catch((error) => console.log(error.response));
     },
@@ -131,10 +304,63 @@ export default {
       axios.delete("/api/transactions/" + transaction.id).then((response) => {
         console.log("Transaction Deleted", response.data);
         // var index = this.transactions.indexOf(transaction);
-        // this.transactions.splice(index, 1);
+        this.portfolio.splice(this.portfolio.indexOf(transaction), 1);
       });
     },
-    // showAddTransactionWindow: function () {},
+    isLoggedIn: function () {
+      return localStorage.getItem("jwt");
+    },
+    loginUserWindow: function () {
+      document.querySelector("#login-dialog-window").showModal();
+    },
+    signupUserWindow: function () {
+      document.querySelector("#signup-dialog-window").showModal();
+    },
+    submitLogin: function () {
+      var params = {
+        email: this.email,
+        password: this.password,
+      };
+      axios
+        .post("/api/sessions", params)
+        .then((response) => {
+          axios.defaults.headers.common["Authorization"] = "Bearer " + response.data.jwt;
+          localStorage.setItem("jwt", response.data.jwt);
+          // this.$router.push("/");
+        })
+        .catch((error) => {
+          console.log(error.response);
+          this.errors = ["Invalid email or password."];
+          this.email = "";
+          this.password = "";
+        });
+    },
+    submitSignup: function () {
+      var params = {
+        name: this.name,
+        email: this.email,
+        password: this.password,
+        password_confirmation: this.passwordConfirmation,
+      };
+      axios
+        .post("/api/users", params)
+        .then((response) => {
+          console.log(response.data);
+          this.$router.push("/login");
+        })
+        .catch((error) => {
+          this.errors = error.response.data.errors;
+        });
+    },
+    loginUserRouter: function () {
+      this.$router.push("/login");
+    },
+    signupUserRouter: function () {
+      this.$router.push("/signup");
+    },
+    transactionNewRouter: function () {
+      this.$router.push("/transactions/new");
+    },
   },
 };
 </script>
