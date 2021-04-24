@@ -11,7 +11,7 @@
     </div>
 
     <dialog id="add-transaction-info-modal">
-      <form method="dialog" @submit="checkForm">
+      <form method="dialog" >
      
         <h1>Transaction Info</h1>
         <h3>{{ current_item["1. symbol"] }} | {{ current_item["2. name"] }}</h3>
@@ -37,8 +37,9 @@
           </span>
 
           <br />
-          <input type="submit" value="Add Transaction" />
+          <!-- <input type="submit" value="Add Transaction" /> -->
           <!-- <button type="button" v-on:click="addTransaction()">Add Transaction</button> -->
+          <button type="submit" v-on:click="checkForm">Submit</button>
           <button>Close</button>
         </div>
       </form>
@@ -59,6 +60,7 @@ export default {
       purchase_price: null,
       purchase_qty: null,
       errors: [],
+      showModal: false,
     };
   },
   mounted() {
@@ -86,6 +88,7 @@ export default {
         });
     },
     addInfoToTransactionModal: function (item) {
+      this.showModal = true;
       this.current_item = item;
       document.querySelector("#add-transaction-info-modal").showModal();
     },
@@ -124,7 +127,8 @@ export default {
       }
 
       e.preventDefault();
-    }
+    },
+  
   },
 };
 </script>

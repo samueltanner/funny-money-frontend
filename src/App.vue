@@ -26,7 +26,10 @@
   </div>
 </template>
 
-<style></style>
+<style>
+h1 {
+}
+</style>
 
 <script>
 export default {

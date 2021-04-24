@@ -1,10 +1,12 @@
 <template>
   <div class="test">
-    <input type="text" placeholder="search stock symbol" v-model="searchItem" />
-    <button type="submit" v-on:click="searchSymbol(searchItem)">Search</button>
-    <div v-for="item in itemList.bestMatches" :key="item.id">
-      <p>{{ item["1. symbol"] }} | {{ item["2. name"] }} | {{ item["3. type"] }}</p>
-    </div>
+    <button id="show-modal" @click="showModal = true">show modal</button>
+    <modal v-if="showModal" @close="showModal = false">
+      <p>here is the modal content</p>
+      <div slot="header">
+        <button class="modal-default-button" @click="showModal = false">Close</button>
+      </div>
+    </modal>
   </div>
 </template>
 
@@ -18,6 +20,7 @@ export default {
       searchItem: "",
       itemList: {},
       apiLoaded: false,
+      showModal: false,
     };
   },
   mounted() {

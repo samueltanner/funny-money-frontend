@@ -55,7 +55,7 @@
     </div>
     <!-- THIS IS THE PORTFOLIO WINDOW -->
     <div v-if="isLoggedIn()">
-      <h1>{{ portfolio[0].username }}'s Portfolio:</h1>
+      <h1>Portfolio:</h1>
       <table>
         <tr>
           <th>Market Value</th>
