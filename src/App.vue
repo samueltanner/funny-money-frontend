@@ -18,6 +18,10 @@
         |
       </span>
       <span v-if="isLoggedIn()">
+        <router-link to="/groups">Groups</router-link>
+        |
+      </span>
+      <span v-if="isLoggedIn()">
         <router-link to="/logout">Logout</router-link>
         |
       </span>

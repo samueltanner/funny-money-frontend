@@ -55,7 +55,7 @@
     </div>
     <!-- THIS IS THE PORTFOLIO WINDOW -->
     <div v-if="isLoggedIn()">
-      <h1>Portfolio:</h1>
+      <h1>{{ user_info.username }}'s Portfolio:</h1>
       <table>
         <tr>
           <th>Market Value</th>
@@ -161,6 +161,7 @@ import axios from "axios";
 export default {
   data: function () {
     return {
+      user_info: [],
       current_transaction: {},
       portfolio: [],
       symbol: "",
@@ -180,6 +181,7 @@ export default {
   },
   created: function () {
     this.indexPortfolio();
+    this.showUserInfo();
   },
   computed: {
     gain_loss: function () {
@@ -286,6 +288,12 @@ export default {
       axios.get("/api/transactions").then((response) => {
         console.log(response.data);
         this.portfolio = response.data;
+      });
+    },
+    showUserInfo: function () {
+      axios.get("/api/users/" + this.$route.params.id).then((response) => {
+        console.log(response.data);
+        this.user_info = response.data;
       });
     },
     openTransactionWindow: function () {

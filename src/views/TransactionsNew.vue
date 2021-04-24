@@ -12,7 +12,6 @@
 
     <dialog id="add-transaction-info-modal">
       <form method="dialog" >
-     
         <h1>Transaction Info</h1>
         <h3>{{ current_item["1. symbol"] }} | {{ current_item["2. name"] }}</h3>
         <div>
