@@ -32,7 +32,7 @@ export default {
   },
   methods: {
     showUserInfo: function () {
-      axios.get("/api/users/" + this.$route.params.id).then((response) => {
+      axios.get("/api/users/" + localStorage.getItem("user_id")).then((response) => {
         console.log(response.data);
         this.user_info = response.data;
       });
