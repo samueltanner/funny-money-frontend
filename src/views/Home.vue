@@ -55,30 +55,170 @@
     </div>
     <!-- THIS IS THE PORTFOLIO WINDOW -->
     <div v-if="isLoggedIn()">
-      <h1>Portfolio:</h1>
-      <!-- <h1>{{ user_info.username }}'s Portfolio:</h1> FIX THIS-->
-      <table>
+      <h1>{{ user_info.username }}'s Portfolio:</h1>
+      <!-- Dashboard -->
+      <div id="dashboard" class="row">
+        <!-- MARKET VALUE  -->
+        <div class="col-xl-3 col-md-6 mb-4">
+          <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div class="text-xs font-we≈ight-bold text-primary text-uppercase mb-1">Market Value</div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">${{ portfolio_market_value }}</div>
+                </div>
+                <!-- <div class="col-auto">
+                  <i class="fas fa-folder fa-2x text-gray-300"></i>
+                </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Day ∆ -->
+        <div class="col-xl-3 col-md-6 mb-4">
+          <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Day Change</div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">
+                    ${{ portfolio_day_change }} ({{ portfolio_day_change_percent }}%)
+                  </div>
+                </div>
+                <!-- <div class="col-auto">
+                  <i class="fas fa-sun-o fa-2x text-gray-300"></i>
+                </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Cost Basis -->
+        <div class="col-xl-3 col-md-6 mb-4">
+          <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Cost Basis</div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">${{ portfolio_cost_basis }}</div>
+                </div>
+                <!-- <div class="col-auto">
+                  <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Gain/Loss -->
+        <div class="col-xl-3 col-md-6 mb-4">
+          <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Gain/Loss</div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">
+                    ${{ portfolio_gain_loss }} ({{ portfolio_gain_loss_percent }}%)
+                  </div>
+                </div>
+                <!-- <div class="col-auto">
+                  <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <table>
         <tr>
           <th>Market Value</th>
           <th>Day Change</th>
           <th>Cost Basis</th>
           <th>Gain/Loss</th>
-          <!-- <th>Previous Day Value</th> -->
+          <th>Previous Day Value</th>
         </tr>
         <tr>
           <td>${{ portfolio_market_value }}</td>
           <td>${{ portfolio_day_change }} ({{ portfolio_day_change_percent }}%)</td>
           <td>${{ portfolio_cost_basis }}</td>
           <td>${{ portfolio_gain_loss }} ({{ portfolio_gain_loss_percent }}%)</td>
-          <!-- <td>{{ previous_day_market_value }}</td> -->
+          <td>{{ previous_day_market_value }}</td>
         </tr>
-      </table>
+      </table> -->
       <br />
       <div>
-        <button v-on:click="transactionNewRouter()">Add Transaction</button>
+        <a v-on:click="transactionNewRouter()" class="btn btn-success btn-icon-split">
+          <span class="icon text-white-50">
+            <i class="fas fa-plus-circle"></i>
+          </span>
+          <span class="text">Add Transaction</span>
+        </a>
+        <!-- <button v-on:click="transactionNewRouter()">Add Transaction</button> -->
       </div>
       <hr />
-      <div v-for="(transaction, index) in portfolio" v-bind:key="transaction.id">
+      <!-- Transaction Table -->
+      <div>
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Portfolio Holdings</h6>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                  <tr>
+                    <th>Symbol</th>
+                    <th>Current Price</th>
+                    <th>Day Change</th>
+                    <th>Market Value</th>
+                    <th>Cost Basis</th>
+                    <th>Gain/Loss</th>
+                    <th>Purchase Price/Quantity</th>
+                    <th>Purchase Quantity</th>
+                    <th>Percent of Portfolio</th>
+                    <th>Edit/Remove</th>
+                  </tr>
+                </thead>
+                <tfoot>
+                  <tr>
+                    <th>Symbol</th>
+                    <th>Current Price</th>
+                    <th>Day Change</th>
+                    <th>Market Value</th>
+                    <th>Cost Basis</th>
+                    <th>Gain/Loss</th>
+                    <th>Purchase Price</th>
+                    <th>Purchase Quantity</th>
+                    <th>Percent of Portfolio</th>
+                    <th>Edit/Remove</th>
+                  </tr>
+                </tfoot>
+                <tbody v-for="(transaction, index) in portfolio" v-bind:key="transaction.id">
+                  <tr>
+                    <td>{{ transaction.symbol }} - {{ transaction.current_info["companyName"] }}</td>
+                    <td>${{ transaction.current_info["latestPrice"] }}</td>
+                    <td>${{ transaction.current_info["change"] }} ({{ day_change_percent[index] }}%)</td>
+                    <td>${{ market_value[index] }}</td>
+                    <td>${{ transaction.cost_basis }}</td>
+                    <td>${{ gain_loss[index] }} ({{ gain_loss_percent[index] }}%)</td>
+                    <td>${{ transaction.purchase_price }}</td>
+                    <td>{{ transaction.purchase_qty }}</td>
+                    <td>{{ portfolio_percent[index] }}%</td>
+                    <td>
+                      <!-- <button type="button" v-on:click="showTransactionInfo(transaction)">
+                        Transaction Info/Update
+                      </button> -->
+                      <a v-on:click="showTransactionInfo(transaction)" class="btn btn-warning btn-circle">
+                        <i class="fas fa-info-circle"></i>
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <div v-for="(transaction, index) in portfolio" v-bind:key="transaction.id">
         <h3>{{ transaction.symbol }} - {{ transaction.current_info["companyName"] }}</h3>
         <p>Quantity: {{ transaction.purchase_qty }}</p>
         <p>Current Price: ${{ transaction.current_info["latestPrice"] }}</p>
@@ -86,9 +226,9 @@
         <p>Day % Change: {{ day_change_percent[index] }}</p>
         <p>Market Value: ${{ market_value[index] }}</p>
         <p>Cost Basis: ${{ transaction.cost_basis }}</p>
-        <!-- <p>
+       <p>
           Gain/Loss: ${{ transaction.purchase_qty * transaction.current_info["latestPrice"] - transaction.cost_basis }}
-        </p> -->
+        </p>
         <p>Gain/Loss: ${{ gain_loss[index] }}</p>
         <p>Gain/Loss %: {{ gain_loss_percent[index] }}</p>
         <p>Purchase Price: {{ transaction.purchase_price }}</p>
@@ -97,7 +237,7 @@
         <button type="button" v-on:click="showTransactionInfo(transaction)">Transaction Info/Update</button>
 
         <hr />
-      </div>
+      </div> -->
     </div>
     <!-- THIS IS THE CREATE TRANSACTION DIALOG WINDOW -->
 
@@ -124,14 +264,73 @@
     </dialog>
 
     <!-- THIS IS THE UPDATE/DELETE TRANSACTION DIALOG WINDOW -->
-
     <dialog id="update-transaction-info">
+      <div class="card shadow mb-4">
+        <div class="card-header py-3">
+          <h6 class="m-0 font-weight-bold text-primary">Update Transaction Info</h6>
+        </div>
+        <div class="card-body">
+          <form method="dialog">
+            <div>
+              <h3>{{ current_transaction.symbol }}</h3>
+            </div>
+            <hr />
+            <div>
+              <label id="modal-text-box-label" for="purchase-price-input"><h4>Purchase Price:</h4></label>
+              <input id="purchase-price-input" type="text" v-model="update_purchase_price" />
+            </div>
+            <div>
+              <label for="purchase-quantity-inptut" id="modal-text-box-label"><h4>Purchase Quantity:</h4></label>
+              <input id="purchase-quantity-inptut" type="text" v-model="update_purchase_qty" />
+            </div>
+            <br />
+            <button
+              href="#"
+              id="modal-button"
+              type="submit"
+              class="btn btn-success btn-icon-split"
+              v-on:click="updateTransaction(current_transaction)"
+            >
+              <span class="icon text-white-50">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="text">Update Transaction</span>
+            </button>
+            <!-- <button
+              class="btn btn-success btn-icon-split"
+              type="submit"
+              v-on:click="updateTransaction(current_transaction)"
+            >
+              Update Transaction
+            </button> -->
+            <button
+              id="modal-button"
+              href="#"
+              class="btn btn-danger btn-icon-split"
+              v-on:click="destroyTransaction(current_transaction)"
+            >
+              <span class="icon text-white-50">
+                <i class="fas fa-trash"></i>
+              </span>
+              <span class="text">Delete Transaction</span>
+            </button>
+            <!-- <button type="submit" v-on:click="destroyTransaction(current_transaction)">Delete Transaction</button> -->
+            <button id="modal-button" href="#" class="btn btn-secondary btn-icon-split">
+              <span class="icon text-white-50">
+                <i class="fas fa-times"></i>
+              </span>
+              <span class="text">Close</span>
+            </button>
+            <!-- <button>Close</button> -->
+          </form>
+        </div>
+      </div>
+    </dialog>
+    <!-- <dialog id="update-transaction-info">
       <form method="dialog">
         <h1>Transaction Info:</h1>
         <span>
           <h3>{{ current_transaction.symbol }}</h3>
-          <!-- <label for="ticker-input">Symbol/Ticker:</label>
-          <input id="ticker-input" type="text" v-model="update_symbol" /> -->
         </span>
         <span>
           <label for="purchase-price-input">Purchase Price:</label>
@@ -143,15 +342,34 @@
         </span>
         <br />
         <button type="submit" v-on:click="updateTransaction(current_transaction)">Update Transaction</button>
-        <!-- <button type="reset">Reset</button> -->
         <button type="submit" v-on:click="destroyTransaction(current_transaction)">Delete Transaction</button>
         <button>Close</button>
-        <span>
-          <!-- <label for="ticker-input">Symbol/Ticker:</label>
-          <input id="ticker-input" type="text" v-model="transaction.symbol" /> -->
-        </span>
+        <span></span>
       </form>
-    </dialog>
+    </dialog> -->
+
+    <!-- GROUP AREA -->
+    <hr />
+    <div v-for="group in user_info.groups" :key="group.id" id="group-flexbox">
+      <div id="group-flexbox-item" class="card shadow mb-4">
+        <div class="card-header py-3">
+          <h6 class="m-0 font-weight-bold text-primary">{{ group.name }}</h6>
+        </div>
+        <div class="card-body">
+          {{ group.description }}
+        </div>
+      </div>
+
+      <!-- <div id="group-flexbox-item" class="card shadow mb-4">
+        <div class="card-header py-3">
+          <h6 class="m-0 font-weight-bold text-primary">Basic Card Example</h6>
+        </div>
+        <div class="card-body">
+          The styling for this basic card example is created by using default Bootstrap utility classes. By using
+          utility classes, the style of the card component can be easily modified with no need for any custom CSS!
+        </div>
+      </div> -->
+    </div>
   </div>
 </template>
 
@@ -181,8 +399,8 @@ export default {
     };
   },
   created: function () {
-    this.indexPortfolio();
     this.showUserInfo();
+    this.indexPortfolio();
   },
   computed: {
     gain_loss: function () {
@@ -207,7 +425,7 @@ export default {
     day_change_percent: function () {
       return this.portfolio.map(function (transaction) {
         var num = transaction.current_info["changePercent"];
-        return num;
+        return num.toFixed(3);
       });
     },
     portfolio_day_change: function () {
@@ -224,6 +442,10 @@ export default {
         .map(Number)
         .reduce((a, b) => a + b, 0)
         .toFixed(2);
+      // .toLocaleString("en-US", {
+      //   style: "currency",
+      //   currency: "USD",
+      // });
       return value;
     },
     portfolio_percent: function () {
@@ -292,7 +514,7 @@ export default {
       });
     },
     showUserInfo: function () {
-      axios.get("/api/users/" + this.$route.params.id).then((response) => {
+      axios.get("/api/users/" + localStorage.getItem("user_id")).then((response) => {
         console.log(response.data);
         this.user_info = response.data;
       });

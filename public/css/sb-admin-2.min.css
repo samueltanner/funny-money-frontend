@@ -9830,7 +9830,7 @@ a:focus {
   background-size: cover;
 }
 .bg-register-image {
-  background: url(https://source.unsplash.com/Mv9hjnEUHR4/600x800);
+  background: url(https://is4-ssl.mzstatic.com/image/thumb/Purple69/v4/d5/3f/24/d53f242d-50fd-1dcd-4844-a8e639dde829/source/512x512bb.jpg);
   background-position: center;
   background-size: cover;
 }
@@ -10223,4 +10223,35 @@ footer.sticky-footer .copyright {
 }
 body.sidebar-toggled footer.sticky-footer {
   width: 100%;
+}
+#modal-text-box-label {
+  margin: 5px;
+}
+#modal-button {
+  margin: 5px;
+}
+#update-transaction-info {
+  background-color: rgba(0, 0, 0, 0);
+  border-style: none;
+}
+#symbol-search-button {
+  border-radius: 0rem 0.35rem 0.35rem 0rem;
+  background-color: #4e73df;
+  border-color: #4e73df;
+}
+#symbol-search-input {
+  border-radius: 0.35rem 0rem 0rem 0.35rem;
+}
+#transaction-search-unit {
+  margin-bottom: 20px;
+}
+#transaction-search-icon {
+  color: #fff;
+}
+#group-flexbox {
+  display: grid;
+}
+#group-flexbox-item {
+  margin: 0 0 0 10px;
+  align-self: auto;
 }

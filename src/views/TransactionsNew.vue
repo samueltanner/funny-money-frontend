@@ -1,9 +1,13 @@
 <template>
   <div class="transaction-new">
     <h1>Add Transaction</h1>
-    <input type="text" placeholder="search stock symbol" v-model="searchItem" />
-    <button type="submit" v-on:click="searchSymbol(searchItem)">Search</button>
+
+    <div id="transaction-search-unit">
+      <input id="symbol-search-input" type="text" placeholder="search stock symbol" v-model="searchItem" />
+      <button id="symbol-search-button" type="submit" v-on:click="searchSymbol(searchItem)" >  <i id="transaction-search-icon" class="fas fa-search fa-sm"></i></button>
+    </div>
     <div v-for="item in itemList.bestMatches" :key="item.id">
+
       <p>
         {{ item["1. symbol"] }} | {{ item["2. name"] }}
         <button v-on:click="addInfoToTransactionModal(item)">Select</button>

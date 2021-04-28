@@ -14,7 +14,12 @@
                     <div class="text-center">
                       <h1 class="h4 text-gray-900 mb-4">Welcome to Funny Money!</h1>
                     </div>
-                    <form class="user">
+                    <ul>
+                      <li class="text-danger" v-for="error in errors" v-bind:key="error">
+                        {{ error }}
+                      </li>
+                    </ul>
+                    <form v-on:submit.prevent="submit()" class="user">
                       <div class="form-group">
                         <input
                           type="email"
@@ -22,6 +27,7 @@
                           id="exampleInputEmail"
                           aria-describedby="emailHelp"
                           placeholder="Enter Email Address..."
+                          v-model="email"
                         />
                       </div>
                       <div class="form-group">
@@ -30,6 +36,7 @@
                           class="form-control form-control-user"
                           id="exampleInputPassword"
                           placeholder="Password"
+                          v-model="password"
                         />
                       </div>
                       <!-- <div class="form-group">
@@ -38,14 +45,15 @@
                           <label class="custom-control-label" for="customCheck">Remember Me</label>
                         </div>
                       </div> -->
-                      <a href="index.html" class="btn btn-primary btn-user btn-block">Login</a>
+                      <input type="submit" value="Login" class="btn btn-primary btn-user btn-block" />
+                      <!-- <a href="/" type="submit" class="btn btn-primary btn-user btn-block">Login</a> -->
                       <hr />
                     </form>
                     <!-- <div class="text-center">
                       <a class="small" href="forgot-password.html">Forgot Password?</a>
                     </div> -->
                     <div class="text-center">
-                      <a class="small" href="register.html">Create an Account!</a>
+                      <a class="small" href="/signup">Create an Account!</a>
                     </div>
                   </div>
                 </div>
@@ -55,7 +63,7 @@
         </div>
       </div>
     </div>
-    <form v-on:submit.prevent="submit()">
+    <!-- <form v-on:submit.prevent="submit()">
       <h1>Login</h1>
       <ul>
         <li class="text-danger" v-for="error in errors" v-bind:key="error">
@@ -71,7 +79,7 @@
         <input type="password" class="form-control" v-model="password" />
       </div>
       <input type="submit" class="btn btn-primary" value="Submit" />
-    </form>
+    </form> -->
   </div>
 </template>
 

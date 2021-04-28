@@ -53,6 +53,13 @@
           </a>
         </li>
 
+        <li class="nav-item active">
+          <a class="nav-link" href="/transactions/new">
+            <i class="fas fa-plus-circle" aria-hidden="true"></i>
+            <span>Add Transaction</span>
+          </a>
+        </li>
+
         <!-- Divider -->
         <hr class="sidebar-divider" />
 
@@ -193,9 +200,9 @@
           <!-- Topbar -->
           <nav v-if="isLoggedIn()" class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
             <!-- Sidebar Toggle (Topbar) -->
-            <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <!-- <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
               <i class="fa fa-bars"></i>
-            </button>
+            </button> -->
 
             <!-- Topbar Search -->
             <!-- <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
@@ -267,7 +274,7 @@
                   aria-haspopup="true"
                   aria-expanded="false"
                 >
-                  <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ username }}</span>
+                  <span class="mr-2 d-none d-lg-inline text-gray-600 small">Profile</span>
                   <img class="img-profile rounded-circle" src="img/undraw_profile.svg" />
                 </a>
                 <!-- Dropdown - User Information -->
@@ -359,14 +366,26 @@
 <style></style>
 
 <script>
+import axios from "axios";
+
 export default {
   data: function () {
     return {
       // username: localStorage.getItem("username"),
       username: "Profile",
+      user_info: {},
     };
   },
+  mounted: function () {
+    // this.showUserInfo();
+  },
   methods: {
+    showUserInfo: function () {
+      axios.get("/api/users/" + localStorage.getItem("user_id")).then((response) => {
+        console.log(response.data);
+        this.user_info = response.data;
+      });
+    },
     isLoggedIn: function () {
       return localStorage.getItem("jwt");
     },
