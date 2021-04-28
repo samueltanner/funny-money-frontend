@@ -350,8 +350,9 @@
 
     <!-- GROUP AREA -->
     <hr />
-    <div v-for="group in user_info.groups" :key="group.id" id="group-flexbox">
-      <div id="group-flexbox-item" class="card shadow mb-4">
+    <h1>Groups:</h1>
+    <div id="group-flexbox">
+      <div v-for="group in user_info.groups" :key="group.id" id="group-flexbox-item" class="card shadow mb-4">
         <div class="card-header py-3">
           <h6 class="m-0 font-weight-bold text-primary">{{ group.name }}</h6>
         </div>

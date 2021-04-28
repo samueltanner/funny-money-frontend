@@ -10249,9 +10249,10 @@ body.sidebar-toggled footer.sticky-footer {
   color: #fff;
 }
 #group-flexbox {
-  display: grid;
+  display: flex;
 }
 #group-flexbox-item {
   margin: 0 0 0 10px;
   align-self: auto;
+  max-width: 30%;
 }
