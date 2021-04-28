@@ -6,23 +6,25 @@
         <em>"{{ group.group_description }}"</em>
       </p>
     </div>
-    <div v-for="(member, index) in group_data" :key="member.id">
+    <div v-for="member in group_data" :key="member.id">
       <h3>{{ member.username }}</h3>
-      <h3>Portfolio Value: ${{ user_portfolio_values[index] }}</h3>
+      <!-- <h3>Portfolio Value: ${{ user_portfolio_values[index] }}</h3> -->
       <p>{{ member.username }}'s Portfolio:</p>
+
       <div>
         <table>
           <thead>
             <th>Symbol</th>
             <th>Gain/Loss %</th>
             <th>Day Change</th>
-            <th>Percent of Portfolio</th>
+            <th>% of Portfolio</th>
+            <!-- <th>Percent of Portfolio</th> -->
           </thead>
-          <tbody v-for="transaction in member.transactions" :key="transaction.id">
+          <tbody v-for="(transaction, index) in member.transactions" :key="transaction.id">
             <td>{{ transaction.symbol }}</td>
             <td>{{ gain_loss_percent(transaction) }}%</td>
-            <td>${{ transaction.current_info["change"] }} ({{ transaction.current_info["changePercent"] * 100 }}%)</td>
-            <td>{{ percent_of_portfolio(transaction) }}%</td>
+            <td>${{ transaction.current_info["change"] }} ({{ day_percent_change(transaction) }}%)</td>
+            <td>{{ percent_of_portfolio(member)[index] }}%</td>
           </tbody>
         </table>
       </div>
@@ -39,7 +41,6 @@ export default {
       group: {},
       group_data: [],
       user_transactions: {},
-      user_portfolio_values: [],
     };
   },
   created: function () {
@@ -56,17 +57,39 @@ export default {
     },
     getUserData: function (member) {
       axios.get("/api/users/" + member).then((response) => {
-        this.portfolio_market_value(response.data);
         this.group_data.push(response.data);
+        // this.portfolio_market_value(response.data);
+        // this.percent_of_portfolio(response.data);
       });
     },
-    portfolio_market_value: function (member) {
-      var user_transactions_array = [];
+    percent_of_portfolio: function (member) {
+      this.user_percent_of_portfolio = [];
+      var portfolio_value = 0;
+      var transaction_market_values = [];
+      var percent_values = [];
       member.transactions.map(function (transaction) {
-        user_transactions_array.push(transaction.purchase_qty * transaction.current_info["latestPrice"]);
+        var current_value = transaction.purchase_qty * transaction.current_info["latestPrice"];
+        transaction_market_values.push(current_value);
       });
-      this.user_portfolio_values.push(user_transactions_array.reduce((a, b) => a + b, 0));
+      for (let i = 0; i < transaction_market_values.length; i++) {
+        portfolio_value += transaction_market_values[i];
+      }
+      member.transactions.map(function (transaction) {
+        var transaction_percent =
+          ((transaction.purchase_qty * transaction.current_info["latestPrice"]) / portfolio_value) * 100;
+
+        percent_values.push(transaction_percent.toFixed(1));
+      });
+      // console.log(percent_values);
+      return percent_values;
     },
+    // portfolio_market_value: function (member) {
+    //   var user_transactions_array = [];
+    //   member.transactions.map(function (transaction) {
+    //     user_transactions_array.push(transaction.purchase_qty * transaction.current_info["latestPrice"]);
+    //   });
+    //   this.user_portfolio_values.push(user_transactions_array.reduce((a, b) => a + b, 0));
+    // },
     gain_loss_percent: function (transaction) {
       var num =
         ((transaction.current_info["latestPrice"] - transaction.purchase_price) / transaction.purchase_price) * 100;
@@ -76,10 +99,9 @@ export default {
       var num = transaction.purchase_qty * transaction.current_info["latestPrice"];
       return num.toFixed(2);
     },
-    percent_of_portfolio: function (transaction) {
-      var num = (transaction.current_info["latestPrice"] * transaction.purchase_qty) / this.user_portfolio_values[1];
-      return (num * 100).toFixed(2);
-      // console.log(this.user_portfolio_values[0]);
+    day_percent_change(transaction) {
+      var num = transaction.current_info["changePercent"] * 100;
+      return num.toFixed(3);
     },
   },
   computed: {},
