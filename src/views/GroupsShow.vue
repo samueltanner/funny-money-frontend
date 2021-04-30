@@ -2,23 +2,30 @@
   <div class="groups-show">
     <div id="group-header">
       <h1>{{ group.group_name }}</h1>
+      <h3>Day Change: {{ group_day_change }}%</h3>
       <p>
         <em>"{{ group.group_description }}"</em>
       </p>
-    </div>
-    <div v-for="member in group_data" :key="member.id">
-      <h3>{{ member.username }}</h3>
-      <!-- <h3>Portfolio Value: ${{ user_portfolio_values[index] }}</h3> -->
-      <p>{{ member.username }}'s Portfolio:</p>
 
+      <a v-on:click="joinGroup()" id="create-group-button" class="btn btn-success btn-icon-split">
+        <span class="icon text-white-50">
+          <i class="fas fa-plus-circle"></i>
+        </span>
+        <span class="text">Join Group</span>
+      </a>
+    </div>
+    <hr />
+    <div class="user-in-group-portfolio" v-for="(member, index) in group_data" :key="member.id">
+      <h3>{{ member.username }} | {{ user_portfolio_values[index] }}%</h3>
+      <!-- <h3>Day Change: {{ user_portfolio_values[index] }}%</h3> -->
+      <!-- <h3>Portfolio Value: ${{ user_portfolio_values[index] }}</h3> -->
       <div>
-        <table>
+        <!-- <table>
           <thead>
             <th>Symbol</th>
             <th>Gain/Loss %</th>
             <th>Day Change</th>
             <th>% of Portfolio</th>
-            <!-- <th>Percent of Portfolio</th> -->
           </thead>
           <tbody v-for="(transaction, index) in member.transactions" :key="transaction.id">
             <td>{{ transaction.symbol }}</td>
@@ -27,6 +34,35 @@
             <td>{{ percent_of_portfolio(member)[index] }}%</td>
           </tbody>
         </table>
+        <br /> -->
+
+        <div>
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">{{ member.username }}'s Holdings</h6>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th>Symbol</th>
+                      <th>Gain/Loss %</th>
+                      <th>Day Change</th>
+                      <th>% of Portfolio</th>
+                    </tr>
+                  </thead>
+                  <tbody v-for="(transaction, index) in member.transactions" :key="transaction.id">
+                    <td>{{ transaction.symbol }}</td>
+                    <td>{{ gain_loss_percent(transaction) }}%</td>
+                    <td>${{ transaction.current_info["change"] }} ({{ day_percent_change(transaction) }}%)</td>
+                    <td>{{ percent_of_portfolio(member)[index] }}%</td>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -41,6 +77,7 @@ export default {
       group: {},
       group_data: [],
       user_transactions: {},
+      user_portfolio_values: [],
     };
   },
   created: function () {
@@ -58,7 +95,7 @@ export default {
     getUserData: function (member) {
       axios.get("/api/users/" + member).then((response) => {
         this.group_data.push(response.data);
-        // this.portfolio_market_value(response.data);
+        this.portfolio_day_change(response.data);
         // this.percent_of_portfolio(response.data);
       });
     },
@@ -83,13 +120,28 @@ export default {
       // console.log(percent_values);
       return percent_values;
     },
-    // portfolio_market_value: function (member) {
-    //   var user_transactions_array = [];
-    //   member.transactions.map(function (transaction) {
-    //     user_transactions_array.push(transaction.purchase_qty * transaction.current_info["latestPrice"]);
-    //   });
-    //   this.user_portfolio_values.push(user_transactions_array.reduce((a, b) => a + b, 0));
-    // },
+    portfolio_day_change: function (member) {
+      var today_value_array = [];
+      var yesterday_value_array = [];
+      member.transactions.map(function (transaction) {
+        today_value_array.push(transaction.purchase_qty * transaction.current_info["latestPrice"]);
+      });
+      member.transactions.map(function (transaction) {
+        yesterday_value_array.push(transaction.purchase_qty * transaction.current_info["previousClose"]);
+      });
+      var today = today_value_array.reduce((a, b) => a + b, 0);
+      var yesterday = yesterday_value_array.reduce((a, b) => a + b, 0);
+      var percent_change = ((today - yesterday) / yesterday) * 100;
+      percent_change.toFixed(2);
+
+      if (percent_change > 0) {
+        percent_change = "+" + percent_change.toFixed(2);
+      } else {
+        percent_change = percent_change.toFixed(2);
+      }
+      this.user_portfolio_values.push(percent_change);
+      // this.user_portfolio_values.push();
+    },
     gain_loss_percent: function (transaction) {
       var num =
         ((transaction.current_info["latestPrice"] - transaction.purchase_price) / transaction.purchase_price) * 100;
@@ -103,7 +155,28 @@ export default {
       var num = transaction.current_info["changePercent"] * 100;
       return num.toFixed(3);
     },
+    joinGroup: function () {
+      var params = {
+        id: this.group.id,
+      };
+      axios.post("/api/groups/" + this.group.id + "/join", params).then((response) => {
+        console.log(response.data);
+        // this.group_data.push(response.data);
+        this.getUserData(localStorage.getItem("user_id"));
+      });
+    },
   },
-  computed: {},
+  computed: {
+    group_day_change: function () {
+      // var number_of_users = this.user_portfolio_values.length;
+      var total_value = [];
+      this.user_portfolio_values.map(function (num) {
+        total_value.push(parseFloat(num));
+      });
+      return total_value.reduce((a, b) => a + b, 0).toFixed(2);
+
+      // return total_value / number_of_users;
+    },
+  },
 };
 </script>

@@ -8,6 +8,7 @@ import HomePage from "../views/HomePage.vue";
 import Test from "../views/Test.vue";
 import TransactionsNew from "../views/TransactionsNew.vue";
 import Groups from "../views/Groups.vue";
+import GroupsNew from "../views/GroupsNew.vue";
 import GroupsShow from "../views/GroupsShow.vue";
 
 
@@ -63,10 +64,16 @@ const routes = [
     component: Groups,
   },
   {
+    path: "/groups/new",
+    name: "groups-new",
+    component: GroupsNew,
+  },
+  {
     path: "/groups/:id",
     name: "groups-show",
     component: GroupsShow,
   },
+
 ];
 
 const router = new VueRouter({

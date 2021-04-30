@@ -10256,3 +10256,11 @@ body.sidebar-toggled footer.sticky-footer {
   align-self: auto;
   max-width: 30%;
 }
+.user-in-group-portfolio {
+  max-width: 50%;
+}
+#create-group-button {
+  margin-bottom: 10px;
+  margin-left: 10px;
+  /* max-width: 30%; */
+}

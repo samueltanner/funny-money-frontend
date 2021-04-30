@@ -253,8 +253,8 @@
           <input id="purchase-price-input" type="text" v-model="purchase_price" />
         </span>
         <span>
-          <label for="purchase-quantity-inptut">Purchase Quantity:</label>
-          <input id="purchase-quantity-inptut" type="text" v-model="purchase_qty" />
+          <label for="purchase-quantity-input">Purchase Quantity:</label>
+          <input id="purchase-quantity-input" type="text" v-model="purchase_qty" />
         </span>
         <br />
         <button type="submit" v-on:click="addTransaction()">Add Transaction</button>
@@ -280,8 +280,8 @@
               <input id="purchase-price-input" type="text" v-model="update_purchase_price" />
             </div>
             <div>
-              <label for="purchase-quantity-inptut" id="modal-text-box-label"><h4>Purchase Quantity:</h4></label>
-              <input id="purchase-quantity-inptut" type="text" v-model="update_purchase_qty" />
+              <label for="purchase-quantity-input" id="modal-text-box-label"><h4>Purchase Quantity:</h4></label>
+              <input id="purchase-quantity-input" type="text" v-model="update_purchase_qty" />
             </div>
             <br />
             <button
@@ -337,8 +337,8 @@
           <input id="purchase-price-input" type="text" v-model="update_purchase_price" />
         </span>
         <span>
-          <label for="purchase-quantity-inptut">Purchase Quantity:</label>
-          <input id="purchase-quantity-inptut" type="text" v-model="update_purchase_qty" />
+          <label for="purchase-quantity-input">Purchase Quantity:</label>
+          <input id="purchase-quantity-input" type="text" v-model="update_purchase_qty" />
         </span>
         <br />
         <button type="submit" v-on:click="updateTransaction(current_transaction)">Update Transaction</button>
@@ -353,23 +353,15 @@
     <h1>Groups:</h1>
     <div id="group-flexbox">
       <div v-for="group in user_info.groups" :key="group.id" id="group-flexbox-item" class="card shadow mb-4">
-        <div class="card-header py-3">
-          <h6 class="m-0 font-weight-bold text-primary">{{ group.name }}</h6>
-        </div>
-        <div class="card-body">
-          {{ group.description }}
-        </div>
+        <router-link v-bind:to="`groups/${group.id}`">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">{{ group.name }}</h6>
+          </div>
+          <div class="card-body">
+            {{ group.description }}
+          </div>
+        </router-link>
       </div>
-
-      <!-- <div id="group-flexbox-item" class="card shadow mb-4">
-        <div class="card-header py-3">
-          <h6 class="m-0 font-weight-bold text-primary">Basic Card Example</h6>
-        </div>
-        <div class="card-body">
-          The styling for this basic card example is created by using default Bootstrap utility classes. By using
-          utility classes, the style of the card component can be easily modified with no need for any custom CSS!
-        </div>
-      </div> -->
     </div>
   </div>
 </template>
