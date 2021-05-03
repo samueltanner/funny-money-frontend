@@ -10264,3 +10264,10 @@ body.sidebar-toggled footer.sticky-footer {
   margin-left: 10px;
   /* max-width: 30%; */
 }
+.text-input {
+  border-radius: 0.35rem;
+  margin-bottom: 10px;
+}
+.group-search-input {
+  margin-left: 10px;
+}

@@ -91,7 +91,14 @@
         <li class="nav-item active">
           <a class="nav-link" href="/groups">
             <i class="fas fa-users" aria-hidden="true"></i>
-            <span>My Groups</span>
+            <span>Groups</span>
+          </a>
+        </li>
+
+        <li class="nav-item active">
+          <a class="nav-link" href="/groups/new">
+            <i class="fas fa-plus-circle" aria-hidden="true"></i>
+            <span>Create New Group</span>
           </a>
         </li>
 

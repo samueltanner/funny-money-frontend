@@ -2,7 +2,8 @@
   <div class="groups-show">
     <div id="group-header">
       <h1>{{ group.group_name }}</h1>
-      <h3>Day Change: {{ group_day_change }}%</h3>
+      <h3>Average Day Change: {{ group_day_change }}%</h3>
+      <h3>Average All Time: {{ group_all_time_change }}%</h3>
       <p>
         <em>"{{ group.group_description }}"</em>
       </p>
@@ -16,7 +17,10 @@
     </div>
     <hr />
     <div class="user-in-group-portfolio" v-for="(member, index) in group_data" :key="member.id">
-      <h3>{{ member.username }} | {{ user_portfolio_values[index] }}%</h3>
+      <h3>
+        {{ member.username }} | Day Change: {{ user_portfolio_values[index] }}% | All Time:
+        {{ all_time_percents[index] }}%
+      </h3>
       <!-- <h3>Day Change: {{ user_portfolio_values[index] }}%</h3> -->
       <!-- <h3>Portfolio Value: ${{ user_portfolio_values[index] }}</h3> -->
       <div>
@@ -78,6 +82,7 @@ export default {
       group_data: [],
       user_transactions: {},
       user_portfolio_values: [],
+      all_time_percents: [],
     };
   },
   created: function () {
@@ -96,6 +101,7 @@ export default {
       axios.get("/api/users/" + member).then((response) => {
         this.group_data.push(response.data);
         this.portfolio_day_change(response.data);
+        this.portfolio_all_time_percent(response.data);
         // this.percent_of_portfolio(response.data);
       });
     },
@@ -142,6 +148,30 @@ export default {
       this.user_portfolio_values.push(percent_change);
       // this.user_portfolio_values.push();
     },
+    portfolio_all_time_percent: function (member) {
+      // sum of each transactions current value
+      // sum of each transactions cost basis
+      // (new - old) / old
+      var today_value_array = [];
+      var purchase_price_array = [];
+      member.transactions.map(function (transaction) {
+        today_value_array.push(transaction.purchase_qty * transaction.current_info["latestPrice"]);
+      });
+      member.transactions.map(function (transaction) {
+        purchase_price_array.push(transaction.purchase_qty * transaction.purchase_price);
+      });
+      var today_total_value = today_value_array.reduce((a, b) => a + b, 0);
+      var purchase_price_value = purchase_price_array.reduce((a, b) => a + b, 0);
+      // console.log(purchase_price_array);
+      var percent_change = ((today_total_value - purchase_price_value) / purchase_price_value) * 100;
+
+      if (percent_change > 0) {
+        percent_change = "+" + percent_change.toFixed(2);
+      } else {
+        percent_change = percent_change.toFixed(2);
+      }
+      this.all_time_percents.push(percent_change);
+    },
     gain_loss_percent: function (transaction) {
       var num =
         ((transaction.current_info["latestPrice"] - transaction.purchase_price) / transaction.purchase_price) * 100;
@@ -168,14 +198,32 @@ export default {
   },
   computed: {
     group_day_change: function () {
-      // var number_of_users = this.user_portfolio_values.length;
+      var number_of_users = this.user_portfolio_values.length;
       var total_value = [];
       this.user_portfolio_values.map(function (num) {
         total_value.push(parseFloat(num));
       });
-      return total_value.reduce((a, b) => a + b, 0).toFixed(2);
-
-      // return total_value / number_of_users;
+      total_value = total_value.reduce((a, b) => a + b, 0) / number_of_users;
+      if (total_value > 0) {
+        total_value = "+" + total_value.toFixed(2);
+      } else {
+        total_value = total_value.toFixed(2);
+      }
+      return total_value;
+    },
+    group_all_time_change: function () {
+      var number_of_users = this.user_portfolio_values.length;
+      var total_value = [];
+      this.all_time_percents.map(function (num) {
+        total_value.push(parseFloat(num));
+      });
+      total_value = total_value.reduce((a, b) => a + b, 0) / number_of_users;
+      if (total_value > 0) {
+        total_value = "+" + total_value.toFixed(2);
+      } else {
+        total_value = total_value.toFixed(2);
+      }
+      return total_value;
     },
   },
 };

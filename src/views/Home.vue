@@ -277,11 +277,11 @@
             <hr />
             <div>
               <label id="modal-text-box-label" for="purchase-price-input"><h4>Purchase Price:</h4></label>
-              <input id="purchase-price-input" type="text" v-model="update_purchase_price" />
+              <input class="text-input" id="purchase-price-input" type="text" v-model="update_purchase_price" />
             </div>
             <div>
               <label for="purchase-quantity-input" id="modal-text-box-label"><h4>Purchase Quantity:</h4></label>
-              <input id="purchase-quantity-input" type="text" v-model="update_purchase_qty" />
+              <input class="text-input" id="purchase-quantity-input" type="text" v-model="update_purchase_qty" />
             </div>
             <br />
             <button

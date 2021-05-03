@@ -26,6 +26,14 @@
 
     <div id="all-groups-window">
       <h1>All Groups:</h1>
+      <!-- <label for="group-search">Search Groups:</label> -->
+      <input
+        type="text"
+        class="text-input group-search-input"
+        id="group-search "
+        placeholder="search group by name"
+        v-model="groupFilter"
+      />
       <!-- <div>
         <label id="group-title-search" class="group-search" for="search">Search Groups:</label>
         <input
@@ -42,7 +50,7 @@
       </datalist> -->
 
       <div id="group-flexbox">
-        <div v-for="group in groups" :key="group.id" id="group-flexbox-item" class="card shadow mb-4">
+        <div v-for="group in fileredGroups" :key="group.id" id="group-flexbox-item" class="card shadow mb-4">
           <router-link v-bind:to="`groups/${group.id}`">
             <div class="card-header py-3">
               <h6 class="m-0 font-weight-bold text-primary">{{ group.group_name }}</h6>
@@ -88,9 +96,17 @@ export default {
     groupNewRouter: function () {
       this.$router.push("/groups/new");
     },
-    // showGroup: function (group) {
-    //   console.log(group);
-    // },
+  },
+  computed: {
+    fileredGroups: function () {
+      if (this.groupFilter) {
+        return this.groups.filter((item) => {
+          return item.group_name.toLowerCase().startsWith(this.groupFilter.toLowerCase());
+        });
+      } else {
+        return this.groups;
+      }
+    },
   },
 };
 </script>
