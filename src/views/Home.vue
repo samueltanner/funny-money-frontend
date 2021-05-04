@@ -1,57 +1,39 @@
 <template>
   <div class="home">
     <div v-if="!isLoggedIn()">
-      <h1>Welcome To Funny Money</h1>
-      <button v-on:click="loginUserRouter()">Login</button>
-      <button v-on:click="signupUserRouter()">Signup</button>
-      <!-- Login Window -->
-      <!-- <dialog id="login-dialog-window">
-        <form v-on:submit.prevent="submitLogin()">
-          <h1>Login</h1>
-          <ul>
-            <li class="text-danger" v-for="error in errors" v-bind:key="error">
-              {{ error }}
-            </li>
+      <div class="login-row">
+        <div class="login-column">
+          <h1>Funny Money</h1>
+
+          <p><em>Safe and shareable investment strategies</em></p>
+          <ul class="no-bullets">
+            <li>Track your investments with real-time market data</li>
+            <li>Safely share stock picks and performance with friends</li>
+            <li>Create and join investment groups</li>
           </ul>
-          <div class="form-group">
-            <label>Email:</label>
-            <input type="email" class="form-control" v-model="email" />
+        </div>
+        <div class="container login-buttons">
+          <!-- Outer Row -->
+          <div class="row justify-content-center">
+            <div class="col-xl-10 col-lg-12 col-md-9">
+              <div class="card o-hidden border-0 shadow-lg my-5">
+                <div class="card-body p-0">
+                  <!-- Nested Row within Card Body -->
+                  <div class="p-5">
+                    <div class="text-center"></div>
+                    <router-link to="/login" class="btn btn-primary btn-user btn-block">Login</router-link>
+                    <router-link to="/signup" class="btn btn-primary btn-user btn-block">Signup</router-link>
+                    <!-- <a href="/" type="submit" class="btn btn-primary btn-user btn-block">Login</a> -->
+                    <!-- <div class="text-center">
+                      <a class="small" href="forgot-password.html">Forgot Password?</a>
+                    </div> -->
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="form-group">
-            <label>Password:</label>
-            <input type="password" class="form-control" v-model="password" />
-          </div>
-          <input type="submit" class="btn btn-primary" value="Submit" />
-        </form>
-      </dialog> -->
-      <!-- Signup Window -->
-      <!-- <dialog id="signup-dialog-window">
-        <form v-on:submit.prevent="submitSignup()">
-          <h1>Signup</h1>
-          <ul>
-            <li class="text-danger" v-for="error in errors" v-bind:key="error">
-              {{ error }}
-            </li>
-          </ul>
-          <div class="form-group">
-            <label>Name:</label>
-            <input type="text" class="form-control" v-model="name" />
-          </div>
-          <div class="form-group">
-            <label>Email:</label>
-            <input type="email" class="form-control" v-model="email" />
-          </div>
-          <div class="form-group">
-            <label>Password:</label>
-            <input type="password" class="form-control" v-model="password" />
-          </div>
-          <div class="form-group">
-            <label>Password confirmation:</label>
-            <input type="password" class="form-control" v-model="passwordConfirmation" />
-          </div>
-          <input type="submit" class="btn btn-primary" value="Submit" />
-        </form>
-      </dialog> -->
+        </div>
+      </div>
     </div>
     <!-- THIS IS THE PORTFOLIO WINDOW -->
     <div v-if="isLoggedIn()">
@@ -192,7 +174,7 @@
                     <th>Edit/Remove</th>
                   </tr>
                 </tfoot>
-                <tbody v-for="(transaction, index) in portfolio" v-bind:key="transaction.id">
+                <tbody v-for="(transaction, index) in filteredPortfolio" v-bind:key="transaction.id">
                   <tr>
                     <td>{{ transaction.symbol }} - {{ transaction.current_info["companyName"] }}</td>
                     <td>${{ transaction.current_info["latestPrice"] }}</td>
@@ -350,17 +332,19 @@
 
     <!-- GROUP AREA -->
     <hr />
-    <h1>Groups:</h1>
-    <div id="group-flexbox">
-      <div v-for="group in user_info.groups" :key="group.id" id="group-flexbox-item" class="card shadow mb-4">
-        <router-link v-bind:to="`groups/${group.id}`">
-          <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">{{ group.name }}</h6>
-          </div>
-          <div class="card-body">
-            {{ group.description }}
-          </div>
-        </router-link>
+    <div v-if="isLoggedIn()" id="group-area">
+      <h1>Groups:</h1>
+      <div id="group-flexbox">
+        <div v-for="group in user_info.groups" :key="group.id" id="group-flexbox-item" class="card shadow mb-4">
+          <router-link v-bind:to="`groups/${group.id}`">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">{{ group.name }}</h6>
+            </div>
+            <div class="card-body">
+              {{ group.description }}
+            </div>
+          </router-link>
+        </div>
       </div>
     </div>
   </div>
@@ -417,8 +401,8 @@ export default {
     },
     day_change_percent: function () {
       return this.portfolio.map(function (transaction) {
-        var num = transaction.current_info["changePercent"];
-        return num.toFixed(3);
+        var num = transaction.current_info["changePercent"] * 100;
+        return num.toFixed(2);
       });
     },
     portfolio_day_change: function () {
@@ -498,17 +482,24 @@ export default {
       var num = ((this.portfolio_market_value - this.portfolio_cost_basis) / this.portfolio_cost_basis) * 100;
       return num.toFixed(3);
     },
+    filteredPortfolio: function () {
+      let result = this.portfolio;
+      // console.log(this.portfolio[0]);
+      return result.sort(function (a, b) {
+        return b.current_info.changePercent - a.current_info.changePercent;
+      });
+    },
   },
   methods: {
     indexPortfolio: function () {
       axios.get("/api/transactions").then((response) => {
-        console.log(response.data);
+        // console.log(response.data);
         this.portfolio = response.data;
       });
     },
     showUserInfo: function () {
       axios.get("/api/users/" + localStorage.getItem("user_id")).then((response) => {
-        console.log(response.data);
+        // console.log(response.data);
         this.user_info = response.data;
       });
     },
@@ -551,11 +542,13 @@ export default {
         .catch((error) => console.log(error.response));
     },
     destroyTransaction: function (transaction) {
-      axios.delete("/api/transactions/" + transaction.id).then((response) => {
-        console.log("Transaction Deleted", response.data);
-        // var index = this.transactions.indexOf(transaction);
-        this.portfolio.splice(this.portfolio.indexOf(transaction), 1);
-      });
+      if (confirm("Are you sure you want to delete this transaction?")) {
+        axios.delete("/api/transactions/" + transaction.id).then((response) => {
+          console.log("Transaction Deleted", response.data);
+          // var index = this.transactions.indexOf(transaction);
+          this.portfolio.splice(this.portfolio.indexOf(transaction), 1);
+        });
+      }
     },
     isLoggedIn: function () {
       return localStorage.getItem("jwt");

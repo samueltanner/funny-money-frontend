@@ -10271,3 +10271,24 @@ body.sidebar-toggled footer.sticky-footer {
 .group-search-input {
   margin-left: 10px;
 }
+.login-row {
+  display: flex;
+  /* background-color: green; */
+  /* background-image: url(https://images.unsplash.com/photo-1585562125287-d748f3097a8f?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=668&q=80);
+  background-repeat: no-repeat;
+  min-height: 800px; */
+}
+.login-column {
+  text-align: center;
+  flex: 50%;
+  margin-top: 50px;
+}
+.login-buttons {
+  max-width: 600px;
+}
+ul.no-bullets {
+  /* color: white; */
+  list-style-type: none; /* Remove bullets */
+  padding: 0; /* Remove padding */
+  margin: 0; /* Remove margins */
+}
