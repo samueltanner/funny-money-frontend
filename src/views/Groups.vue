@@ -13,10 +13,12 @@
         <div v-for="group in user_info.groups" :key="group.id" id="group-flexbox-item" class="card shadow mb-4">
           <router-link v-bind:to="`groups/${group.id}`">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">{{ group.name }}</h6>
+              <h5 class="m-0 font-weight-bold text-primary">{{ group.name }}</h5>
             </div>
             <div class="card-body">
-              {{ group.description }}
+              <p>
+                {{ group.description }}
+              </p>
             </div>
           </router-link>
         </div>
@@ -53,10 +55,12 @@
         <div v-for="group in fileredGroups" :key="group.id" id="group-flexbox-item" class="card shadow mb-4">
           <router-link v-bind:to="`groups/${group.id}`">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">{{ group.group_name }}</h6>
+              <h5 class="m-0 font-weight-bold text-primary">{{ group.group_name }}</h5>
             </div>
             <div class="card-body">
-              {{ group.group_description }}
+              <p>
+                {{ group.group_description }}
+              </p>
             </div>
           </router-link>
         </div>
@@ -101,7 +105,7 @@ export default {
     fileredGroups: function () {
       if (this.groupFilter) {
         return this.groups.filter((item) => {
-          return item.group_name.toLowerCase().startsWith(this.groupFilter.toLowerCase());
+          return item.group_name.toLowerCase().includes(this.groupFilter.toLowerCase());
         });
       } else {
         return this.groups;

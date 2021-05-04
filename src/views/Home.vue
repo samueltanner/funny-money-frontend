@@ -141,7 +141,7 @@
       <div>
         <div class="card shadow mb-4">
           <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Portfolio Holdings</h6>
+            <h5 class="m-0 font-weight-bold text-primary">Portfolio Holdings</h5>
           </div>
           <div class="card-body">
             <div class="table-responsive">
@@ -338,10 +338,12 @@
         <div v-for="group in user_info.groups" :key="group.id" id="group-flexbox-item" class="card shadow mb-4">
           <router-link v-bind:to="`groups/${group.id}`">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">{{ group.name }}</h6>
+              <h5 class="m-0 font-weight-bold text-primary">{{ group.name }}</h5>
             </div>
             <div class="card-body">
-              {{ group.description }}
+              <p>
+                {{ group.description }}
+              </p>
             </div>
           </router-link>
         </div>

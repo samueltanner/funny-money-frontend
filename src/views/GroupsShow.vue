@@ -2,13 +2,13 @@
   <div class="groups-show">
     <div id="group-header">
       <h1>{{ group.group_name }}</h1>
-      <h3>Average Day Change: {{ group_day_change }}%</h3>
-      <h3>Average All Time: {{ group_all_time_change }}%</h3>
       <p>
         <em>"{{ group.group_description }}"</em>
       </p>
+      <h2>Average Day Change: {{ group_day_change }}%</h2>
+      <h2>Average All Time: {{ group_all_time_change }}%</h2>
 
-      <a v-on:click="joinGroup()" id="create-group-button" class="btn btn-success btn-icon-split">
+      <a v-on:click="joinGroup()" id="join-group-button" class="btn btn-success btn-icon-split">
         <span class="icon text-white-50">
           <i class="fas fa-plus-circle"></i>
         </span>
@@ -16,11 +16,11 @@
       </a>
     </div>
     <hr />
-    <div class="user-in-group-portfolio" v-for="(member, index) in group_data" :key="member.id">
-      <h3>
+    <div class="user-in-group-portfolio" v-for="(member, index) in group_data" :key="member.id" defer>
+      <h2>
         {{ member.username }} | Day Change: {{ user_portfolio_values[index] }}% | All Time:
         {{ all_time_percents[index] }}%
-      </h3>
+      </h2>
       <!-- <h3>Day Change: {{ user_portfolio_values[index] }}%</h3> -->
       <!-- <h3>Portfolio Value: ${{ user_portfolio_values[index] }}</h3> -->
       <div>
@@ -43,7 +43,7 @@
         <div>
           <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">{{ member.username }}'s Holdings</h6>
+              <h5 class="m-0 font-weight-bold text-primary">{{ member.username }}'s Holdings</h5>
             </div>
             <div class="card-body">
               <div class="table-responsive">
@@ -146,6 +146,8 @@ export default {
         percent_change = percent_change.toFixed(2);
       }
       this.user_portfolio_values.push(percent_change);
+      member["day_change"] = percent_change;
+      console.log(member);
       // this.user_portfolio_values.push();
     },
     portfolio_all_time_percent: function (member) {
@@ -224,6 +226,13 @@ export default {
         total_value = total_value.toFixed(2);
       }
       return total_value;
+    },
+    group_data_sorted: function () {
+      var result = this.group_data;
+      return result.sort(function (a, b) {
+        return a.day_change - b.day_change;
+      });
+      // return result;
     },
   },
 };

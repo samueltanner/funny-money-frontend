@@ -64,8 +64,7 @@ section {
 }
 body {
   margin: 0;
-  font-family: Nunito, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: "Spectral", serif;
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
@@ -81,16 +80,29 @@ hr {
   height: 0;
   overflow: visible;
 }
-h1,
-h2,
+h1 {
+  font-family: "Spectral", serif;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  /* font-style: ; */
+
+  /* line-height: 1; */
+}
+h2 {
+  font-size: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
 h3,
 h4,
 h5,
 h6 {
-  margin-top: 0;
-  margin-bottom: 0.5rem;
 }
 p {
+  font-family: "Karla", sans-serif;
+  font-weight: 200;
+  font-size: 1rem;
   margin-top: 0;
   margin-bottom: 1rem;
 }
@@ -203,8 +215,14 @@ caption {
   caption-side: bottom;
 }
 th {
+  font-family: "Karla", sans-serif;
+
   text-align: inherit;
   text-align: -webkit-match-parent;
+}
+td {
+  font-family: "Karla", sans-serif;
+  font-weight: 200;
 }
 label {
   display: inline-block;
@@ -339,11 +357,13 @@ h1 {
 }
 .h2,
 h2 {
-  font-size: 2rem;
+  font-size: 1.5rem;
 }
 .h3,
 h3 {
-  font-size: 1.75rem;
+  font-family: "Karla", sans-serif;
+  font-weight: 500;
+  font-size: 1.5rem;
 }
 .h4,
 h4 {
@@ -351,10 +371,14 @@ h4 {
 }
 .h5,
 h5 {
-  font-size: 1.25rem;
+  font-family: "Spectral", serif;
+  font-weight: 400;
+  font-size: 1rem;
 }
 .h6,
 h6 {
+  font-family: "Karla", sans-serif;
+  font-weight: 200;
   font-size: 1rem;
 }
 .lead {
@@ -9015,8 +9039,8 @@ a:focus {
   animation-timing-function: opacity cubic-bezier(0, 1, 0.4, 1);
 }
 .bg-gradient-primary {
-  background-color: #4e73df;
-  background-image: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+  background-color: #1d1d1d;
+  background-image: linear-gradient(180deg, #1d1d1d 10%, #414141 100%);
   background-size: cover;
 }
 .bg-gradient-secondary {
@@ -9825,12 +9849,13 @@ a:focus {
   }
 }
 .bg-login-image {
-  background: url(https://is4-ssl.mzstatic.com/image/thumb/Purple69/v4/d5/3f/24/d53f242d-50fd-1dcd-4844-a8e639dde829/source/512x512bb.jpg);
+  background: url(/img/benji.svg);
+  /* background-size: ; */
   background-position: center;
   background-size: cover;
 }
 .bg-register-image {
-  background: url(https://is4-ssl.mzstatic.com/image/thumb/Purple69/v4/d5/3f/24/d53f242d-50fd-1dcd-4844-a8e639dde829/source/512x512bb.jpg);
+  background: url(/img/benji.svg);
   background-position: center;
   background-size: cover;
 }
@@ -10261,6 +10286,7 @@ body.sidebar-toggled footer.sticky-footer {
 }
 #create-group-button {
   margin-bottom: 10px;
+  margin-top: 10px;
   margin-left: 10px;
   /* max-width: 30%; */
 }
@@ -10291,4 +10317,10 @@ ul.no-bullets {
   list-style-type: none; /* Remove bullets */
   padding: 0; /* Remove padding */
   margin: 0; /* Remove margins */
+}
+#join-group-button {
+  margin-bottom: 10px;
+  margin-top: 10px;
+  /* margin-left: 10px; */
+  /* max-width: 30%; */
 }
