@@ -7,13 +7,14 @@
       </p>
       <h2>Average Day Change: {{ group_day_change }}%</h2>
       <h2>Average All Time: {{ group_all_time_change }}%</h2>
-
-      <a v-on:click="joinGroup()" id="join-group-button" class="btn btn-success btn-icon-split">
-        <span class="icon text-white-50">
-          <i class="fas fa-plus-circle"></i>
-        </span>
-        <span class="text">Join Group</span>
-      </a>
+      <div v-if="inGroup()">
+        <a v-on:click="joinGroup()" id="join-group-button" class="btn btn-success btn-icon-split">
+          <span class="icon text-white-50">
+            <i class="fas fa-plus-circle"></i>
+          </span>
+          <span class="text">Join Group</span>
+        </a>
+      </div>
     </div>
     <hr />
     <div class="user-in-group-portfolio" v-for="(member, index) in group_data" :key="member.id" defer>
@@ -92,7 +93,7 @@ export default {
   methods: {
     showGroup: function () {
       axios.get("/api/groups/" + this.$route.params.id).then((response) => {
-        console.log(response.data);
+        // console.log(response.data);
         this.group = response.data;
         response.data.members.map((user) => this.getUserData(user.id));
       });
@@ -191,11 +192,45 @@ export default {
       var params = {
         id: this.group.id,
       };
-      axios.post("/api/groups/" + this.group.id + "/join", params).then((response) => {
-        console.log(response.data);
-        // this.group_data.push(response.data);
-        this.getUserData(localStorage.getItem("user_id"));
+
+      var current_user_id = localStorage.getItem("user_id");
+      current_user_id = parseInt(current_user_id);
+      // console.log(typeof current_user_id);
+      // console.log(current_user_id);
+
+      var members_ids = [];
+      this.group.members.map(function (member) {
+        members_ids.push(member.id);
+        // console.log(members_ids);
       });
+
+      if (members_ids.includes(current_user_id)) {
+        // console.log(localStorage.getItem("user_id"));
+        console.log("You are already in this group");
+      } else {
+        console.log("You are joining the group");
+        axios.post("/api/groups/" + this.group.id + "/join", params).then((response) => {
+          console.log(response.data);
+          // this.group_data.push(response.data);
+          // this.getUserData(localStorage.getItem("user_id"));
+        });
+      }
+    },
+    inGroup: function () {
+      var current_user_id = localStorage.getItem("user_id");
+      current_user_id = parseInt(current_user_id);
+
+      var members_ids = [];
+      this.group.members.map(function (member) {
+        members_ids.push(member.id);
+        // console.log(members_ids);
+      });
+
+      if (members_ids.includes(current_user_id)) {
+        return false;
+      } else {
+        return true;
+      }
     },
   },
   computed: {
