@@ -98,7 +98,7 @@
         <li class="nav-item active">
           <a class="nav-link" href="/groups/new">
             <i class="fas fa-plus-circle" aria-hidden="true"></i>
-            <span>Create New Group</span>
+            <span>Create Group</span>
           </a>
         </li>
 

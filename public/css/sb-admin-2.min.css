@@ -8947,7 +8947,7 @@ a:focus {
   display: flex;
 }
 #wrapper #content-wrapper {
-  background-color: #f8f9fc;
+  background-image: linear-gradient(180deg, #f2f2f2 10%, #edf2eb 100%);
   width: 100%;
   overflow-x: hidden;
 }
@@ -10275,11 +10275,12 @@ body.sidebar-toggled footer.sticky-footer {
 }
 #group-flexbox {
   display: flex;
+  flex-wrap: wrap;
 }
 #group-flexbox-item {
   margin: 0 0 0 10px;
   align-self: auto;
-  max-width: 30%;
+  max-width: 40%;
 }
 .user-in-group-portfolio {
   max-width: 50%;
@@ -10323,4 +10324,57 @@ ul.no-bullets {
   margin-top: 10px;
   /* margin-left: 10px; */
   /* max-width: 30%; */
+}
+/* #transaction-card {
+  margin: 10px;
+} */
+#transaction-flexbox {
+  display: flex;
+  flex-wrap: wrap;
+}
+#transaction-flexbox-item {
+  margin: 0 0 0 10px;
+  align-self: auto;
+  max-width: 40%;
+}
+#login-page {
+  min-height: 800px;
+  /* background-image: linear-gradient(180deg, #1d1d1d 10%, #414141 100%); */
+}
+#group-area {
+  min-height: 150px;
+}
+#create-group-button {
+  /* margin-left: 0; */
+}
+#portfolio-card-header {
+  display: flex;
+}
+#add-transaction-button {
+  float: right;
+  /* position: relative;
+  right: 5px; */
+  align-content: center;
+}
+.portfolio-card-column {
+  float: left;
+  width: 50%;
+}
+
+/* Clear floats after the columns */
+.portfolio-card-header:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+#portfolio-card-title {
+  padding-top: 10px;
+}
+#group-header {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+#no-group-card {
+  max-width: 40%;
 }

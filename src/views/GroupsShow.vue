@@ -6,21 +6,31 @@
         <em>"{{ group.group_description }}"</em>
       </p>
       <h2>Average Day Change: {{ group_day_change }}%</h2>
-      <h2>Average All Time: {{ group_all_time_change }}%</h2>
-      <div v-if="inGroup()">
-        <a v-on:click="joinGroup()" id="join-group-button" class="btn btn-success btn-icon-split">
-          <span class="icon text-white-50">
-            <i class="fas fa-plus-circle"></i>
-          </span>
-          <span class="text">Join Group</span>
-        </a>
+      <h2>Average All Time: {{ group_all_time_change.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}%</h2>
+      <div v-if="!isHidden">
+        <div v-if="inGroup()">
+          <a
+            v-on:click="
+              joinGroup();
+              isHidden = true;
+            "
+            id="join-group-button"
+            class="btn btn-success btn-icon-split"
+          >
+            <span class="icon text-white-50">
+              <i class="fas fa-plus-circle"></i>
+            </span>
+            <span class="text">Join Group</span>
+          </a>
+        </div>
       </div>
     </div>
     <hr />
     <div class="user-in-group-portfolio" v-for="(member, index) in group_data" :key="member.id" defer>
       <h2>
-        {{ member.username }} | Day Change: {{ user_portfolio_values[index] }}% | All Time:
-        {{ all_time_percents[index] }}%
+        {{ member.username }} | Day Change:
+        {{ user_portfolio_values[index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}% | All Time:
+        {{ all_time_percents[index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}%
       </h2>
       <!-- <h3>Day Change: {{ user_portfolio_values[index] }}%</h3> -->
       <!-- <h3>Portfolio Value: ${{ user_portfolio_values[index] }}</h3> -->
@@ -59,8 +69,20 @@
                   </thead>
                   <tbody v-for="(transaction, index) in member.transactions" :key="transaction.id">
                     <td>{{ transaction.symbol }}</td>
-                    <td>{{ gain_loss_percent(transaction) }}%</td>
-                    <td>${{ transaction.current_info["change"] }} ({{ day_percent_change(transaction) }}%)</td>
+                    <td>
+                      {{
+                        gain_loss_percent(transaction)
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                      }}%
+                    </td>
+                    <td>
+                      ${{ transaction.current_info["change"] }} ({{
+                        day_percent_change(transaction)
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                      }}%)
+                    </td>
                     <td>{{ percent_of_portfolio(member)[index] }}%</td>
                   </tbody>
                 </table>
@@ -84,18 +106,27 @@ export default {
       user_transactions: {},
       user_portfolio_values: [],
       all_time_percents: [],
+      members_ids: [],
+      isHidden: false,
     };
   },
   created: function () {
     this.showGroup();
   },
+  mounted: function () {},
 
   methods: {
     showGroup: function () {
       axios.get("/api/groups/" + this.$route.params.id).then((response) => {
         // console.log(response.data);
         this.group = response.data;
-        response.data.members.map((user) => this.getUserData(user.id));
+        response.data.members.map((user) => {
+          // console.log(user.id);
+          this.getUserData(user.id);
+          this.members_ids.push(user.id);
+          // console.log(this.members_ids);
+        });
+        console.log(this.members_ids);
       });
     },
     getUserData: function (member) {
@@ -148,7 +179,7 @@ export default {
       }
       this.user_portfolio_values.push(percent_change);
       member["day_change"] = percent_change;
-      console.log(member);
+      // console.log(member);
       // this.user_portfolio_values.push();
     },
     portfolio_all_time_percent: function (member) {
@@ -192,29 +223,14 @@ export default {
       var params = {
         id: this.group.id,
       };
-
-      var current_user_id = localStorage.getItem("user_id");
-      current_user_id = parseInt(current_user_id);
-      // console.log(typeof current_user_id);
-      // console.log(current_user_id);
-
-      var members_ids = [];
-      this.group.members.map(function (member) {
-        members_ids.push(member.id);
-        // console.log(members_ids);
+      console.log("You are joining the group");
+      axios.post("/api/groups/" + this.group.id + "/join", params).then((response) => {
+        console.log(response.data);
+        this.getUserData(localStorage.getItem("user_id"));
+        this.members_ids.push(parseInt(localStorage.getItem("user_id")));
+        console.log(this.members_ids);
+        this.inGroup();
       });
-
-      if (members_ids.includes(current_user_id)) {
-        // console.log(localStorage.getItem("user_id"));
-        console.log("You are already in this group");
-      } else {
-        console.log("You are joining the group");
-        axios.post("/api/groups/" + this.group.id + "/join", params).then((response) => {
-          console.log(response.data);
-          // this.group_data.push(response.data);
-          // this.getUserData(localStorage.getItem("user_id"));
-        });
-      }
     },
     inGroup: function () {
       var current_user_id = localStorage.getItem("user_id");
@@ -223,8 +239,10 @@ export default {
       var members_ids = [];
       this.group.members.map(function (member) {
         members_ids.push(member.id);
-        // console.log(members_ids);
       });
+      // console.log(members_ids);
+
+      this.members_ids = members_ids;
 
       if (members_ids.includes(current_user_id)) {
         return false;

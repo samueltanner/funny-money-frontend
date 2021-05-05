@@ -1,7 +1,8 @@
 <template>
   <div class="home">
     <div v-if="!isLoggedIn()">
-      <div class="login-row">
+      <div id="login-page">
+        <!-- <div class="login-row"> -->
         <div class="login-column">
           <h1>Funny Money</h1>
 
@@ -22,7 +23,7 @@
                   <div class="p-5">
                     <div class="text-center"></div>
                     <router-link to="/login" class="btn btn-primary btn-user btn-block">Login</router-link>
-                    <router-link to="/signup" class="btn btn-primary btn-user btn-block">Signup</router-link>
+                    <router-link to="/signup" class="btn btn-success btn-user btn-block">Signup</router-link>
                     <!-- <a href="/" type="submit" class="btn btn-primary btn-user btn-block">Login</a> -->
                     <!-- <div class="text-center">
                       <a class="small" href="forgot-password.html">Forgot Password?</a>
@@ -32,6 +33,7 @@
               </div>
             </div>
           </div>
+          <!-- </div> -->
         </div>
       </div>
     </div>
@@ -47,7 +49,9 @@
               <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
                   <div class="text-xs font-we≈ight-bold text-primary text-uppercase mb-1">Market Value</div>
-                  <div class="h5 mb-0 font-weight-bold text-gray-800">${{ portfolio_market_value }}</div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">
+                    ${{ portfolio_market_value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                  </div>
                 </div>
                 <!-- <div class="col-auto">
                   <i class="fas fa-folder fa-2x text-gray-300"></i>
@@ -65,7 +69,9 @@
                 <div class="col mr-2">
                   <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Day Change</div>
                   <div class="h5 mb-0 font-weight-bold text-gray-800">
-                    ${{ portfolio_day_change }} ({{ portfolio_day_change_percent }}%)
+                    ${{ portfolio_day_change.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} ({{
+                      portfolio_day_change_percent
+                    }}%)
                   </div>
                 </div>
                 <!-- <div class="col-auto">
@@ -82,7 +88,9 @@
               <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
                   <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Cost Basis</div>
-                  <div class="h5 mb-0 font-weight-bold text-gray-800">${{ portfolio_cost_basis }}</div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">
+                    ${{ portfolio_cost_basis.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                  </div>
                 </div>
                 <!-- <div class="col-auto">
                   <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -99,7 +107,9 @@
                 <div class="col mr-2">
                   <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Gain/Loss</div>
                   <div class="h5 mb-0 font-weight-bold text-gray-800">
-                    ${{ portfolio_gain_loss }} ({{ portfolio_gain_loss_percent }}%)
+                    ${{ portfolio_gain_loss.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} ({{
+                      portfolio_gain_loss_percent
+                    }}%)
                   </div>
                 </div>
                 <!-- <div class="col-auto">
@@ -126,22 +136,27 @@
           <td>{{ previous_day_market_value }}</td>
         </tr>
       </table> -->
-      <br />
-      <div>
-        <a v-on:click="transactionNewRouter()" class="btn btn-success btn-icon-split">
-          <span class="icon text-white-50">
-            <i class="fas fa-plus-circle"></i>
-          </span>
-          <span class="text">Add Transaction</span>
-        </a>
-        <!-- <button v-on:click="transactionNewRouter()">Add Transaction</button> -->
-      </div>
+
       <hr />
       <!-- Transaction Table -->
       <div>
         <div class="card shadow mb-4">
           <div class="card-header py-3">
-            <h5 class="m-0 font-weight-bold text-primary">Portfolio Holdings</h5>
+            <div class="portfolio-card-header">
+              <div class="portfolio-card-column" id="portfolio-card-title">
+                <h5 class="m-0 font-weight-bold text-primary">Portfolio Holdings</h5>
+              </div>
+              <div class="portfolio-card-column">
+                <div id="add-transaction-button">
+                  <a v-on:click="transactionNewRouter()" class="btn btn-success btn-icon-split">
+                    <span class="icon text-white-50">
+                      <i class="fas fa-plus-circle"></i>
+                    </span>
+                    <span class="text">Add Transaction</span>
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="card-body">
             <div class="table-responsive">
@@ -154,13 +169,13 @@
                     <th>Market Value</th>
                     <th>Cost Basis</th>
                     <th>Gain/Loss</th>
-                    <th>Purchase Price/Quantity</th>
+                    <th>Purchase Price</th>
                     <th>Purchase Quantity</th>
                     <th>Percent of Portfolio</th>
                     <th>Edit/Remove</th>
                   </tr>
                 </thead>
-                <tfoot>
+                <!-- <tfoot>
                   <tr>
                     <th>Symbol</th>
                     <th>Current Price</th>
@@ -173,17 +188,27 @@
                     <th>Percent of Portfolio</th>
                     <th>Edit/Remove</th>
                   </tr>
-                </tfoot>
+                </tfoot> -->
                 <tbody v-for="(transaction, index) in filteredPortfolio" v-bind:key="transaction.id">
                   <tr>
                     <td>{{ transaction.symbol }} - {{ transaction.current_info["companyName"] }}</td>
-                    <td>${{ transaction.current_info["latestPrice"] }}</td>
-                    <td>${{ transaction.current_info["change"] }} ({{ day_change_percent[index] }}%)</td>
-                    <td>${{ market_value[index] }}</td>
-                    <td>${{ transaction.cost_basis }}</td>
-                    <td>${{ gain_loss[index] }} ({{ gain_loss_percent[index] }}%)</td>
-                    <td>${{ transaction.purchase_price }}</td>
-                    <td>{{ transaction.purchase_qty }}</td>
+                    <td>
+                      ${{ transaction.current_info["latestPrice"].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                    </td>
+                    <td>
+                      ${{ transaction.current_info["change"].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} ({{
+                        day_change_percent[index]
+                      }}%)
+                    </td>
+                    <td>${{ market_value[index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</td>
+                    <td>${{ transaction.cost_basis.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</td>
+                    <td>
+                      ${{ gain_loss[index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} ({{
+                        gain_loss_percent[index]
+                      }}%)
+                    </td>
+                    <td>${{ transaction.purchase_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</td>
+                    <td>{{ transaction.purchase_qty.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</td>
                     <td>{{ portfolio_percent[index] }}%</td>
                     <td>
                       <!-- <button type="button" v-on:click="showTransactionInfo(transaction)">
@@ -258,11 +283,11 @@
             </div>
             <hr />
             <div>
-              <label id="modal-text-box-label" for="purchase-price-input"><h4>Purchase Price:</h4></label>
+              <label id="modal-text-box-label" for="purchase-price-input"><h5>Purchase Price:</h5></label>
               <input class="text-input" id="purchase-price-input" type="text" v-model="update_purchase_price" />
             </div>
             <div>
-              <label for="purchase-quantity-input" id="modal-text-box-label"><h4>Purchase Quantity:</h4></label>
+              <label for="purchase-quantity-input" id="modal-text-box-label"><h5>Purchase Quantity:</h5></label>
               <input class="text-input" id="purchase-quantity-input" type="text" v-model="update_purchase_qty" />
             </div>
             <br />
@@ -333,8 +358,41 @@
     <!-- GROUP AREA -->
     <hr />
     <div v-if="isLoggedIn()" id="group-area">
-      <h1>Groups:</h1>
+      <div id="group-header">
+        <h1>Groups:</h1>
+        <div id="create-group-button">
+          <a href="/groups/new" class="btn btn-success btn-icon-split">
+            <span class="icon text-white-50">
+              <i class="fas fa-plus-circle"></i>
+            </span>
+            <span class="text">Create Group</span>
+          </a>
+          <!-- <button v-on:click="transactionNewRouter()">Add Transaction</button> -->
+        </div>
+        <div id="create-group-button">
+          <a href="/groups" class="btn btn-primary btn-icon-split">
+            <span class="icon text-white-50">
+              <i class="fas fa-search"></i>
+            </span>
+            <span class="text">Find Group</span>
+          </a>
+          <!-- <button v-on:click="transactionNewRouter()">Add Transaction</button> -->
+        </div>
+      </div>
       <div id="group-flexbox">
+        <div v-if="noGroups()">
+          <div class="card shadow mb-4" id="no-group-card">
+            <div class="card-header py-3">
+              <h5 class="m-0 font-weight-bold text-primary">Join a Funny Money Group!</h5>
+            </div>
+            <div class="card-body">
+              <p>
+                This app was built so users can safely and easily share their investment strategies. Get started by
+                joining a group or creating a new one with the buttons above!
+              </p>
+            </div>
+          </div>
+        </div>
         <div v-for="group in user_info.groups" :key="group.id" id="group-flexbox-item" class="card shadow mb-4">
           <router-link v-bind:to="`groups/${group.id}`">
             <div class="card-header py-3">
@@ -436,22 +494,6 @@ export default {
       }
       return percent_array;
     },
-    // previous_day_portfolio_market_value: function () {
-    //   return this.portfolio.map(function (transaction) {
-    //     var arr = transaction.purchase_qty * transaction.current_info["previousClose"];
-    //     return arr;
-
-    //     // var value = arr.map(Number).reduce((a, b) => a + b, 0);
-    //     // return value;
-    //   });
-    // },
-    // previous_day_market_value: function () {
-    //   return this.portfolio.map(function (transaction) {
-    //     var strings = transaction.purchase_qty * transaction.current_info["previousClose"];
-    //     // .reduce((a, b) => a + b, 0);
-    //     return strings;
-    //   });
-    // },
     previous_day_market_value: function () {
       var arr = Array.from(
         this.portfolio.map(function (transaction) {
@@ -501,7 +543,7 @@ export default {
     },
     showUserInfo: function () {
       axios.get("/api/users/" + localStorage.getItem("user_id")).then((response) => {
-        // console.log(response.data);
+        console.log(response.data);
         this.user_info = response.data;
       });
     },
@@ -605,6 +647,11 @@ export default {
     },
     transactionNewRouter: function () {
       this.$router.push("/transactions/new");
+    },
+    noGroups: function () {
+      if (this.user_info.groups.length === 0) {
+        return true;
+      }
     },
   },
 };
