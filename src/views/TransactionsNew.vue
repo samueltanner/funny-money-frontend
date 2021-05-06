@@ -9,9 +9,7 @@
       </button>
       <div v-if="search_errors.length">
         <ul>
-          v-for="error in search_errors" :key="error.id">{{
-            error
-          }}
+          <li v-for="error in search_errors" :key="error.id">{{ error }}</li>
         </ul>
       </div>
     </div>

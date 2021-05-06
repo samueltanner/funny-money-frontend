@@ -10308,7 +10308,7 @@ body.sidebar-toggled footer.sticky-footer {
 .login-column {
   text-align: center;
   flex: 50%;
-  margin-top: 50px;
+  margin-top: 20%;
 }
 .login-buttons {
   max-width: 600px;
