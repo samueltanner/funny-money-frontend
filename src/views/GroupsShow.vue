@@ -7,7 +7,21 @@
       </p>
       <h2>Average Day Change: {{ group_day_change }}%</h2>
       <h2>Average All Time: {{ group_all_time_change.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}%</h2>
-      <div v-if="!isHidden">
+      <div v-if="transactions">
+        <a href="/transactions/new" class="btn btn-secondary btn-icon-split">
+          <span class="icon text-white-50">
+            <i class="fas fa-arrow-right"></i>
+          </span>
+          <span class="text">Add Transaction to Portfolio</span>
+        </a>
+        <ul>
+          <li>
+            <p>You must have a transaction in your portfolio before joining a group</p>
+          </li>
+        </ul>
+      </div>
+
+      <div v-else-if="!isHidden">
         <div v-if="inGroup()">
           <a
             v-on:click="
@@ -108,10 +122,12 @@ export default {
       all_time_percents: [],
       members_ids: [],
       isHidden: false,
+      transactions: false,
     };
   },
   created: function () {
     this.showGroup();
+    this.noTrans();
   },
   mounted: function () {},
 
@@ -127,6 +143,19 @@ export default {
           // console.log(this.members_ids);
         });
         console.log(this.members_ids);
+      });
+    },
+    noTrans: function () {
+      var current_user_info = [];
+      axios.get("/api/users/" + localStorage.getItem("user_id")).then((response) => {
+        console.log(response.data);
+        current_user_info = response.data;
+        if (current_user_info.transactions.length === 0) {
+          console.log("no transactions");
+          this.transactions = true;
+        } else {
+          this.transactions = false;
+        }
       });
     },
     getUserData: function (member) {
@@ -171,6 +200,7 @@ export default {
       var yesterday = yesterday_value_array.reduce((a, b) => a + b, 0);
       var percent_change = ((today - yesterday) / yesterday) * 100;
       percent_change.toFixed(2);
+      percent_change = percent_change || 0;
 
       if (percent_change > 0) {
         percent_change = "+" + percent_change.toFixed(2);
@@ -198,6 +228,7 @@ export default {
       var purchase_price_value = purchase_price_array.reduce((a, b) => a + b, 0);
       // console.log(purchase_price_array);
       var percent_change = ((today_total_value - purchase_price_value) / purchase_price_value) * 100;
+      percent_change = percent_change || 0;
 
       if (percent_change > 0) {
         percent_change = "+" + percent_change.toFixed(2);
@@ -217,6 +248,7 @@ export default {
     },
     day_percent_change(transaction) {
       var num = transaction.current_info["changePercent"] * 100;
+      num = num || 0;
       return num.toFixed(3);
     },
     joinGroup: function () {
@@ -228,7 +260,7 @@ export default {
         console.log(response.data);
         this.getUserData(localStorage.getItem("user_id"));
         this.members_ids.push(parseInt(localStorage.getItem("user_id")));
-        console.log(this.members_ids);
+        // console.log(this.members_ids);
         this.inGroup();
       });
     },

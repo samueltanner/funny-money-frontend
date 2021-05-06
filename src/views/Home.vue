@@ -6,11 +6,24 @@
         <div class="login-column">
           <h1>Funny Money</h1>
 
-          <p><em>Safe and shareable investment strategies</em></p>
-          <ul class="no-bullets">
-            <li>Track your investments with real-time market data</li>
-            <li>Safely share stock picks and performance with friends</li>
-            <li>Create and join investment groups</li>
+          <p><em>Sharable investment strategies for the modern investor</em></p>
+          <h5>• • •</h5>
+          <ul class="no-bullets" id="value-props">
+            <li class="value-prop">
+              <i class="fas fa-folder value-prop-icon"></i>
+              <br />
+              Track your porfolio with real-time market data
+            </li>
+            <li class="value-prop">
+              <i class="fa fa-users value-prop-icon" aria-hidden="true"></i>
+              <br />
+              Create and join investment groups with friends
+            </li>
+            <li class="value-prop">
+              <i class="fa fa-percent value-prop-icon" aria-hidden="true"></i>
+              <br />
+              Share performance without disclosing wealth
+            </li>
           </ul>
         </div>
         <div class="container login-buttons">
@@ -358,7 +371,7 @@
     <!-- GROUP AREA -->
     <hr />
     <div v-if="isLoggedIn()" id="group-area">
-      <div id="group-header">
+      <div id="user-group-header">
         <h1>Groups:</h1>
         <div id="create-group-button">
           <a href="/groups/new" class="btn btn-success btn-icon-split">
@@ -383,12 +396,12 @@
         <div v-if="noGroups()">
           <div class="card shadow mb-4" id="no-group-card">
             <div class="card-header py-3">
-              <h5 class="m-0 font-weight-bold text-primary">Join a Funny Money Group!</h5>
+              <h5 class="m-0 font-weight-bold text-primary">Funny Money Groups!</h5>
             </div>
             <div class="card-body">
               <p>
                 This app was built so users can safely and easily share their investment strategies. Get started by
-                joining a group or creating a new one with the buttons above!
+                adding a transaction and then join a group or create a new one with the buttons above!
               </p>
             </div>
           </div>
@@ -504,6 +517,7 @@ export default {
     },
     portfolio_day_change_percent: function () {
       var num = (this.portfolio_market_value - this.previous_day_market_value) / this.previous_day_market_value;
+      num = num || 0;
       num = num * 100;
       return num.toFixed(3);
     },
@@ -524,6 +538,7 @@ export default {
     },
     portfolio_gain_loss_percent: function () {
       var num = ((this.portfolio_market_value - this.portfolio_cost_basis) / this.portfolio_cost_basis) * 100;
+      num = num || 0;
       return num.toFixed(3);
     },
     filteredPortfolio: function () {
@@ -650,6 +665,11 @@ export default {
     },
     noGroups: function () {
       if (this.user_info.groups.length === 0) {
+        return true;
+      }
+    },
+    noTransactions: function () {
+      if (this.user_info.transactions.length === 0) {
         return true;
       }
     },

@@ -10370,11 +10370,26 @@ ul.no-bullets {
 #portfolio-card-title {
   padding-top: 10px;
 }
-#group-header {
+#user-group-header {
   display: flex;
   flex-wrap: wrap;
   margin-bottom: 10px;
 }
 #no-group-card {
   max-width: 40%;
+}
+#value-props {
+  max-width: 80%;
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+}
+.value-prop {
+  max-width: 20%;
+  margin: 20px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.value-prop-icon {
+  font-size: 2em;
 }
