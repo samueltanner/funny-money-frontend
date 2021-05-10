@@ -374,7 +374,7 @@
       <div id="user-group-header">
         <h1>Groups:</h1>
         <div id="create-group-button">
-          <a href="/groups/new" class="btn btn-success btn-icon-split">
+          <a href="/#/groups/new" class="btn btn-success btn-icon-split">
             <span class="icon text-white-50">
               <i class="fas fa-plus-circle"></i>
             </span>
@@ -383,7 +383,7 @@
           <!-- <button v-on:click="transactionNewRouter()">Add Transaction</button> -->
         </div>
         <div id="create-group-button">
-          <a href="/groups" class="btn btn-primary btn-icon-split">
+          <a href="/#/groups" class="btn btn-primary btn-icon-split">
             <span class="icon text-white-50">
               <i class="fas fa-search"></i>
             </span>

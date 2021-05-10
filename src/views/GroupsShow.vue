@@ -8,7 +8,7 @@
       <h2>Average Day Change: {{ group_day_change }}%</h2>
       <h2>Average All Time: {{ group_all_time_change.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}%</h2>
       <div v-if="transactions">
-        <a href="/transactions/new" class="btn btn-secondary btn-icon-split">
+        <a href="/#/transactions/new" class="btn btn-secondary btn-icon-split">
           <span class="icon text-white-50">
             <i class="fas fa-arrow-right"></i>
           </span>

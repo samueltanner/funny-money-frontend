@@ -54,7 +54,7 @@
         </li>
 
         <li class="nav-item active">
-          <a class="nav-link" href="/transactions/new">
+          <a class="nav-link" href="/#/transactions/new">
             <i class="fas fa-plus-circle" aria-hidden="true"></i>
             <span>Add Transaction</span>
           </a>
